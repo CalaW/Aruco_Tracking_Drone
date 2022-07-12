@@ -367,7 +367,7 @@ static void atkpSendPeriod(void)
 		attitude_t attitude;
 		getAttitudeData(&attitude);
 		int baroData = getBaroData();
-		// sendStatus(attitude.roll, attitude.pitch, attitude.yaw, baroData, 0, flyable);			
+		sendStatus(attitude.roll, attitude.pitch, attitude.yaw, baroData, 0, flyable);			
 	}
 	if(!(count_ms % PERIOD_SENSOR))
 	{
@@ -375,7 +375,7 @@ static void atkpSendPeriod(void)
 		Axis3i16 gyro;
 		Axis3i16 mag;
 		getSensorRawData(&acc, &gyro, &mag);
-		// sendSenser(acc.x, acc.y, acc.z, gyro.x, gyro.y, gyro.z, mag.x, mag.y, mag.z);
+		sendSenser(acc.x, acc.y, acc.z, gyro.x, gyro.y, gyro.z, mag.x, mag.y, mag.z);
 	}
 	if(!(count_ms % PERIOD_USERDATA))	/*用户数据*/
 	{
@@ -383,19 +383,19 @@ static void atkpSendPeriod(void)
 		float thrustBase = 0.1f * configParam.thrustBase;
 		
 		getStateData(&acc, &vel, &pos);
-		// sendUserData(1, acc.x, acc.y, acc.z, vel.x, vel.y, vel.z, pos.x, pos.y, pos.z);
-		// sendUserData(2, opFlow.velLpf[X],opFlow.velLpf[Y],opFlow.posSum[X],opFlow.posSum[Y],
-		// 				0,getFusedHeight(),vl53lxx.distance,100.f*vl53lxx.quality,thrustBase);
+		sendUserData(1, acc.x, acc.y, acc.z, vel.x, vel.y, vel.z, pos.x, pos.y, pos.z);
+		sendUserData(2, opFlow.velLpf[X],opFlow.velLpf[Y],opFlow.posSum[X],opFlow.posSum[Y],
+						0,getFusedHeight(),vl53lxx.distance,100.f*vl53lxx.quality,thrustBase);
 	}
 	if(!(count_ms % PERIOD_RCDATA))
 	{
-		// sendRCData(rcdata.thrust, rcdata.yaw, rcdata.roll,
-		// 			rcdata.pitch, 0, 0, 0, 0, 0, 0);
+		sendRCData(rcdata.thrust, rcdata.yaw, rcdata.roll,
+					rcdata.pitch, 0, 0, 0, 0, 0, 0);
 	}
 	if(!(count_ms % PERIOD_POWER))
 	{
 		float bat = pmGetBatteryVoltage();
-		// sendPower(bat*100,500);
+		sendPower(bat*100,500);
 	}
 	if(!(count_ms % PERIOD_MOTOR))
 	{
@@ -406,12 +406,12 @@ static void atkpSendPeriod(void)
 		m2 = (float)motorPWM.m2/65535*1000;
 		m3 = (float)motorPWM.m3/65535*1000;
 		m4 = (float)motorPWM.m4/65535*1000;
-		// sendMotorPWM(m1,m2,m3,m4,0,0,0,0);
+		sendMotorPWM(m1,m2,m3,m4,0,0,0,0);
 	}
 	if(!(count_ms % PERIOD_SENSOR2))
 	{
 		int baro = getBaroData() * 100.f;
-		// sendSenser2(baro, 0);
+		sendSenser2(baro, 0);
 	}
 	if(++count_ms>=65535) 
 		count_ms = 1;	
