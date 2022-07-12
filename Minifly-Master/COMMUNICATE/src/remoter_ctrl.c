@@ -34,7 +34,7 @@
  * 版本V1.3 增加上电校准通过后上传微调信息。
 ********************************************************************************/
 
-static ctrlVal_t remoterCtrl;/*发送到commander姿态控制数据*/
+ctrlVal_t remoterCtrl;/*发送到commander姿态控制数据*/
 static MiniFlyMsg_t msg;
 static u8 reSendTimes = 3;	/*微调重发次数*/
 

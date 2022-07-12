@@ -3,6 +3,7 @@
 #include "atkp.h"
 #include "sys.h"
 #include "module_detect.h"
+#include "commander.h"
 
 /********************************************************************************	 
  * 本程序只供学习使用，未经作者许可，不得用于其它任何用途
@@ -71,6 +72,8 @@ typedef __packed struct
 
 void remoterCtrlProcess(atkp_t* pk);
 void sendMsgACK(void);
+
+extern ctrlVal_t remoterCtrl;/*发送到commander姿态控制数据*/
 
 
 #endif /* WIFI_CONTROL_H */
