@@ -29,24 +29,13 @@ typedef struct
     int polarity;
 } led_t;
 
-/*默认LED灯接口*/
-//static led_t leds[LED_NUM] =
-//{
-//    [LED_BLUE_L]	= {GPIOB, GPIO_Pin_12, LED_POL_POS},
-//    [LED_GREEN_L]	= {GPIOA, GPIO_Pin_6,  LED_POL_NEG},
-//    [LED_RED_L] 	= {GPIOA, GPIO_Pin_7,  LED_POL_NEG},
-//    [LED_GREEN_R]	= {GPIOC, GPIO_Pin_13, LED_POL_NEG},
-//    [LED_RED_R] 	= {GPIOC, GPIO_Pin_14, LED_POL_NEG},
-//};
-
-/*改动后的LED灯接口*/
-static led_t leds[LED_NUM] =	
+static led_t leds[LED_NUM] =
 {
     [LED_BLUE_L]	= {GPIOB, GPIO_Pin_12, LED_POL_POS},
-    [LED_GREEN_L]	= {GPIOA, GPIO_Pin_7,  LED_POL_NEG},
-    [LED_RED_L] 	= {GPIOA, GPIO_Pin_6,  LED_POL_NEG},
-    [LED_GREEN_R]	= {GPIOC, GPIO_Pin_14, LED_POL_NEG},
-    [LED_RED_R] 	= {GPIOC, GPIO_Pin_13, LED_POL_NEG},
+    [LED_GREEN_L]	= {GPIOA, GPIO_Pin_6,  LED_POL_NEG},
+    [LED_RED_L] 	= {GPIOA, GPIO_Pin_7,  LED_POL_NEG},
+    [LED_GREEN_R]	= {GPIOC, GPIO_Pin_13, LED_POL_NEG},
+    [LED_RED_R] 	= {GPIOC, GPIO_Pin_14, LED_POL_NEG},
 };
 
 /* LED初始化 */

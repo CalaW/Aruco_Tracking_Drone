@@ -104,13 +104,15 @@ static void ctrlDataUpdate(void)
 	
 	if(isRCLocked == false)	/*解锁状态*/
 	{
-		ctrlVal_t ctrlVal =  nowCache->tarVal[nowCache->activeSide];	/*读取缓存*/
+		ctrlVal_t ctrlVal =  nowCache->tarVal[nowCache->activeSide];	/*读取缓存*//*增加了三个变量*/
 		
 //		ctrlValLpf.thrust = ctrlVal.thrust;
 //		ctrlValLpf.pitch = ctrlVal.pitch;
 //		ctrlValLpf.roll = ctrlVal.roll;
 //		ctrlValLpf.yaw = ctrlVal.yaw;
-		
+		ctrlValLpf.x = ctrlVal.x;
+		ctrlValLpf.y = ctrlVal.y;
+		ctrlValLpf.depth = ctrlVal.depth;
 		ctrlValLpf.thrust += (ctrlVal.thrust - ctrlValLpf.thrust) * lpfVal;
 		ctrlValLpf.pitch += (ctrlVal.pitch - ctrlValLpf.pitch) * lpfVal;
 		ctrlValLpf.roll += (ctrlVal.roll - ctrlValLpf.roll) * lpfVal;

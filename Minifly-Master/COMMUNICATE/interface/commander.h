@@ -31,8 +31,12 @@ typedef struct
 }commanderBits_t;
 
 /*控制数据结构体*/
+//增加x,y,depth
 typedef __packed struct
 {
+	float x;
+	float y;
+	float depth;
 	float roll;       // deg
 	float pitch;      // deg
 	float yaw;        // deg

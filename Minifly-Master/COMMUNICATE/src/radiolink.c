@@ -171,7 +171,7 @@ static void atkpPacketDispatch(atkp_t *rxPacket)
 		{
 			ASSERT(txPacket.dataLen <= ATKP_MAX_DATA_SIZE);
 			ledseqRun(DATA_TX_LED, seq_linkup);
-			uartSendPacket(&txPacket);
+			//uartSendPacket(&txPacket);
 		}
 	}
 }

@@ -12,6 +12,7 @@
 #include "module_mgt.h"
 #include "ledring12.h"
 #include "vl53lxx.h"
+#include "system.h"
 
 /*FreeRTOS相关头文件*/
 #include "FreeRTOS.h"
@@ -111,10 +112,13 @@ void remoterCtrlProcess(atkp_t* pk)
 				break;
 		}
 	}
-	else if(pk->data[0] == REMOTER_DATA)
+	else if(pk->data[0] == REMOTER_DATA)//增加x,y,depth
 	{
 		remoterData_t remoterData = *(remoterData_t*)(pk->data+1);
 		
+		remoterCtrl.x = remoterData.x;
+		remoterCtrl.y = remoterData.y;
+		remoterCtrl.depth = remoterData.depth;
 		remoterCtrl.roll = remoterData.roll;
 		remoterCtrl.pitch = remoterData.pitch;
 		remoterCtrl.yaw = remoterData.yaw;
@@ -125,6 +129,8 @@ void remoterCtrlProcess(atkp_t* pk)
 		setCommanderCtrlMode(remoterData.ctrlMode);
 		setCommanderFlightmode(remoterData.flightMode);
 		flightCtrldataCache(ATK_REMOTER, remoterCtrl);
+		
+		//printf("\n%f %f %f\n",remoterCtrl.x,remoterCtrl.y,remoterCtrl.depth);
 	}
 }
 

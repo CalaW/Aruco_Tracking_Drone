@@ -150,7 +150,7 @@ void usblinkRxTask(void *param)
 				case waitForStartByte2:
 					//USB_SendData(c);
 					if(c == '2'){
-						rxState = waitForMsgID;
+						rxState = waitForData;
 						//USB_SendData('M');
 					}
 					else{
@@ -161,10 +161,10 @@ void usblinkRxTask(void *param)
 					cksum += c;
 					///USB_SendData('2');
 					break;
-				case waitForMsgID:
+				//case waitForMsgID:
 				//	USB_SendData(c);
-				  	rxPacket.msgID = c;
-				  	rxState = waitForData;
+				  	//rxPacket.msgID = c;
+				  	//rxState = waitForData;
 				//	cksum += c;
 				//	USB_SendData('3');
 				  break;

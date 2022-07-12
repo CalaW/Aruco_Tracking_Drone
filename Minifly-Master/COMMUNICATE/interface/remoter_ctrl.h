@@ -38,8 +38,12 @@ typedef enum
 #define  ACK_MSG			0x01
 
 /*遥控数据结构*/
+//增加x,y,depth
 typedef __packed struct
 {
+	float x;
+	float y;
+	float depth;
 	float roll;      
 	float pitch;  
 	float yaw;      
