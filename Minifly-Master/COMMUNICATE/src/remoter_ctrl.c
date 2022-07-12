@@ -116,21 +116,20 @@ void remoterCtrlProcess(atkp_t* pk)
 	{
 		remoterData_t remoterData = *(remoterData_t*)(pk->data+1);
 		
-		remoterCtrl.x = remoterData.x;
-		remoterCtrl.y = remoterData.y;
-		remoterCtrl.depth = remoterData.depth;
 		remoterCtrl.roll = remoterData.roll;
 		remoterCtrl.pitch = remoterData.pitch;
 		remoterCtrl.yaw = remoterData.yaw;
 		remoterCtrl.thrust = remoterData.thrust * 655.35f;
 		remoterCtrl.trimPitch = remoterData.trimPitch;
 		remoterCtrl.trimRoll = remoterData.trimRoll;
+
+		remoterCtrl.x = remoterData.x;
+		remoterCtrl.y = remoterData.y;
+		remoterCtrl.depth = remoterData.depth;
 		
 		setCommanderCtrlMode(remoterData.ctrlMode);
 		setCommanderFlightmode(remoterData.flightMode);
 		flightCtrldataCache(ATK_REMOTER, remoterCtrl);
-		
-		//printf("\n%f %f %f\n",remoterCtrl.x,remoterCtrl.y,remoterCtrl.depth);
 	}
 }
 

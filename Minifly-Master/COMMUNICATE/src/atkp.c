@@ -386,6 +386,7 @@ static void atkpSendPeriod(void)
 		sendUserData(1, acc.x, acc.y, acc.z, vel.x, vel.y, vel.z, pos.x, pos.y, pos.z);
 		sendUserData(2, opFlow.velLpf[X],opFlow.velLpf[Y],opFlow.posSum[X],opFlow.posSum[Y],
 						0,getFusedHeight(),vl53lxx.distance,100.f*vl53lxx.quality,thrustBase);
+		sendUserData(3, remoterCtrl.x, remoterCtrl.y, remoterCtrl.depth, 0, 0, 0, 0, 0, 0);
 	}
 	if(!(count_ms % PERIOD_RCDATA))
 	{

@@ -104,7 +104,7 @@ static void ctrlDataUpdate(void)
 	
 	if(isRCLocked == false)	/*解锁状态*/
 	{
-		ctrlVal_t ctrlVal =  nowCache->tarVal[nowCache->activeSide];	/*读取缓存*//*增加了三个变量*/
+		ctrlVal_t ctrlVal =  nowCache->tarVal[nowCache->activeSide];	/*读取缓存*///增加x,y,d
 		
 //		ctrlValLpf.thrust = ctrlVal.thrust;
 //		ctrlValLpf.pitch = ctrlVal.pitch;

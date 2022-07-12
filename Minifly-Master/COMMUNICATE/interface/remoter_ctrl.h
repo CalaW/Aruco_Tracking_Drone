@@ -41,9 +41,6 @@ typedef enum
 //Ôö¼Óx,y,depth
 typedef __packed struct
 {
-	float x;
-	float y;
-	float depth;
 	float roll;      
 	float pitch;  
 	float yaw;      
@@ -53,6 +50,9 @@ typedef __packed struct
 	u8	ctrlMode;
 	bool flightMode;
 	bool RCLock;
+	float x;
+	float y;
+	float depth;
 } remoterData_t;
 
 typedef __packed struct
