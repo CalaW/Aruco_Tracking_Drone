@@ -59,10 +59,12 @@ typedef __packed struct
 	u8 ctrlMode;
 	bool flightMode;
 	bool RCLock;
+	/*
 	float x;
 	float y;
   float depth;
 	s16 aruco_id;
+	*/
 } remoterData_t;
 
 typedef __packed struct

@@ -42,11 +42,12 @@
 #define  MAX_YAW			(200.0)
 
 static joystickFlyf_t flydata;
+/*
 extern float x_Now;
 extern float y_Now;
 extern float depth_Now;
 extern s16 My_id;
-
+*/
 
 /*·¢ËÍÒ£¿ØÃüÁî*/
 void sendRmotorCmd(u8 cmd, u8 data)
@@ -108,11 +109,12 @@ void commanderTask(void* param)
 	float max_pitch = LOW_SPEED_PITCH;
 	float max_roll = LOW_SPEED_ROLL;
 	joystickFlyf_t  percent;
+	/*
 	x_Now = 0.0;
 	y_Now = 0.0;
 	depth_Now = 0.0;
 	My_id = 0;
-	
+	*/
 	while(1)
 	{
 		vTaskDelay(10);
@@ -209,12 +211,12 @@ void commanderTask(void* param)
 			send.yaw = flydata.yaw;
 			send.trimPitch = configParam.trim.pitch;
 			send.trimRoll = configParam.trim.roll;
-			
+			/*
 			send.x = x_Now;
 			send.y = y_Now;
 			send.depth = depth_Now;
 			send.aruco_id = My_id;
-			
+			*/
 			/*·¢ËÍ·É¿ØÊý¾Ý*/
 			sendRmotorData((u8*)&send, sizeof(send));
 			
