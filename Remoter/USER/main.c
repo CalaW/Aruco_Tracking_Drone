@@ -65,7 +65,7 @@ void startTask(void *param)
 	
 	xTaskCreate(radiolinkTask, "RADIOLINK", 100, NULL, 6, &radiolinkTaskHandle);/*创建无线连接任务*/
 	
-	//xTaskCreate(usblinkTxTask, "USBLINK_TX", 100, NULL, 5, NULL);	/*创建usb发送任务*/
+	xTaskCreate(usblinkTxTask, "USBLINK_TX", 100, NULL, 5, NULL);	/*创建usb发送任务*/
 	xTaskCreate(usblinkRxTask, "USBLINK_RX", 100, NULL, 5, NULL);	/*创建usb接收任务*/
 	
 	xTaskCreate(commanderTask, "COMMANDER", 100, NULL, 4, NULL);	/*创建飞控指令发送任务*/
