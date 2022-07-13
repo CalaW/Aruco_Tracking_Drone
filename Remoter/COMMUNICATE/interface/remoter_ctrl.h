@@ -61,7 +61,7 @@ typedef __packed struct
 	bool RCLock;
 	float x;
 	float y;
-	float depth;
+  float depth;
 	s16 aruco_id;
 } remoterData_t;
 
@@ -77,6 +77,7 @@ typedef __packed struct
 	float trimRoll;		/*rollÎ¢µ÷*/
 	float trimPitch;	/*pitchÎ¢µ÷*/
 } MiniFlyMsg_t;
+
 
 void commanderTask(void* param);
 joystickFlyf_t getFlyControlData(void);

@@ -168,7 +168,7 @@ void usblinkRxTask(void *param)
 				case waitForChksum1:
 					if (cksum == c)/*所有校验正确*/
 					{
-						upAnalyse(&rxPacket);
+						//upAnalyse(&rxPacket);
 						xQueueSend(rxQueue, &rxPacket, 0);
 					} 
 					else

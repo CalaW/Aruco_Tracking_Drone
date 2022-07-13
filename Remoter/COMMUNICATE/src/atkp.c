@@ -28,6 +28,10 @@
 float plane_yaw,plane_roll,plane_pitch;
 float plane_bat;
 u8 rssi;
+float x_Now;
+float y_Now;
+float depth_Now;
+s16 My_id;
 
 /*atkp½âÎö*/
 static void atkpAnalyze(atkp_t *p)
@@ -69,6 +73,12 @@ static void atkpAnalyze(atkp_t *p)
 				setMatchRadioConfig(&radio);
 				break;
 		}
+	}
+	else if(p->msgID == UP_MyData){
+		x_Now = (float)(((p->data[1])<<1) + (p->data[2]));
+		y_Now = (float)(((p->data[3])<<1) + (p->data[4]));
+		depth_Now = (float)(((p->data[5])<<1) + (p->data[6]));
+		My_id = (s16)(p->data[7]);
 	}
 }
 
