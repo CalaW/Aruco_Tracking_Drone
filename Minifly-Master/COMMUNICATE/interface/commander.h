@@ -34,16 +34,16 @@ typedef struct
 //����x,y,depth
 typedef __packed struct
 {
-	float x;
-	float y;
-	float depth;
-	s16 aruco_id;
 	float roll;       // deg
 	float pitch;      // deg
 	float yaw;        // deg
 	float trimPitch;
 	float trimRoll;
 	u16 thrust;
+	float x;
+	float y;
+	float depth;
+	s16 aruco_id;
 } ctrlVal_t;
 
 /*���ݻ���ṹ��*/
