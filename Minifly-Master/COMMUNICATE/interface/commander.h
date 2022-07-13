@@ -45,6 +45,14 @@ typedef __packed struct
 	// s16 aruco_id;
 } ctrlVal_t;
 
+typedef __packed struct
+{
+	float x;
+	float y;
+	float z;
+	s16 id;
+} arucoData_t;
+
 /*���ݻ���ṹ��*/
 typedef struct
 {
@@ -90,5 +98,7 @@ bool getCommanderKeyland(void);
 
 void setCommanderFlightmode(bool set);
 void setCommanderEmerStop(bool set);
+
+extern arucoData_t arucoData;
 
 #endif /* __COMMANDER_H */
