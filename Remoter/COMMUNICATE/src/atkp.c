@@ -29,6 +29,9 @@ float plane_yaw,plane_roll,plane_pitch;
 float plane_bat;
 u8 rssi;
 
+my_send_data MySendData;
+atkp_t mypacket;
+
 /*atkp½âÎö*/
 static void atkpAnalyze(atkp_t *p)
 {
@@ -69,6 +72,16 @@ static void atkpAnalyze(atkp_t *p)
 				setMatchRadioConfig(&radio);
 				break;
 		}
+	}
+	else if(p->msgID == UP_MyData){
+		mypacket.msgID = DOWN_MyData;
+		MySendData.x_Now = (float)(((p->data[1])<<8) + (p->data[2]));
+		MySendData.y_Now = (float)(((p->data[3])<<8) + (p->data[4]));
+		MySendData.depth_Now = (float)(((p->data[5])<<8) + (p->data[6]));
+		MySendData.My_id = (s16)(p->data[7]);
+		mypacket.dataLen = sizeof(MySendData);
+		memcpy(mypacket.data,(u8*)&MySendData,sizeof(MySendData));
+		radiolinkSendPacket(&mypacket);
 	}
 }
 

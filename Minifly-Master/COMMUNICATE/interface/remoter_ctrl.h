@@ -3,41 +3,43 @@
 #include "atkp.h"
 #include "sys.h"
 #include "module_detect.h"
+#include "commander.h"
 
 /********************************************************************************	 
- * ±¾³ÌÐòÖ»¹©Ñ§Ï°Ê¹ÓÃ£¬Î´¾­×÷ÕßÐí¿É£¬²»µÃÓÃÓÚÆäËüÈÎºÎÓÃÍ¾
+ * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö»ï¿½ï¿½Ñ§Ï°Ê¹ï¿½Ã£ï¿½Î´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îºï¿½ï¿½ï¿½Í¾
  * ALIENTEK MiniFly
- * Ò£¿ØÆ÷¿ØÖÆÇý¶¯´úÂë	
- * ÕýµãÔ­×Ó@ALIENTEK
- * ¼¼ÊõÂÛÌ³:www.openedv.com
- * ´´½¨ÈÕÆÚ:2017/5/12
- * °æ±¾£ºV1.3
- * °æÈ¨ËùÓÐ£¬µÁ°æ±Ø¾¿¡£
- * Copyright(C) ¹ãÖÝÊÐÐÇÒíµç×Ó¿Æ¼¼ÓÐÏÞ¹«Ë¾ 2014-2024
+ * Ò£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½	
+ * ï¿½ï¿½ï¿½ï¿½Ô­ï¿½ï¿½@ALIENTEK
+ * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì³:www.openedv.com
+ * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½:2017/5/12
+ * ï¿½æ±¾ï¿½ï¿½V1.3
+ * ï¿½ï¿½È¨ï¿½ï¿½ï¿½Ð£ï¿½ï¿½ï¿½ï¿½ï¿½Ø¾ï¿½ï¿½ï¿½
+ * Copyright(C) ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¿Æ¼ï¿½ï¿½ï¿½ï¿½Þ¹ï¿½Ë¾ 2014-2024
  * All rights reserved
 ********************************************************************************/
 
-/*Ò£¿ØÊý¾ÝÀà±ð*/
+/*Ò£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
 typedef enum 
 {
 	REMOTER_CMD,
 	REMOTER_DATA,
 }remoterType_e;
 
-/*ÏÂÐÐÃüÁî*/
-#define  CMD_GET_MSG		0x01	/*»ñÈ¡ËÄÖáÐÅÏ¢£¨×Ô¼ì£©*/
-#define  CMD_GET_CANFLY		0x02	/*»ñÈ¡ËÄÖáÊÇ·ñÄÜ·É*/
-#define  CMD_FLIGHT_LAND	0x03	/*Æð·É¡¢½µÂä*/
-#define  CMD_EMER_STOP		0x04	/*½ô¼±Í£»ú*/
-#define  CMD_FLIP			0x05	/*4D·­¹ö*/
-#define  CMD_POWER_MODULE	0x06	/*´ò¿ª¹Ø±ÕÀ©Õ¹Ä£¿éµçÔ´*/
-#define  CMD_LEDRING_EFFECT	0x07	/*ÉèÖÃRGBµÆ»·Ð§¹û*/
-#define  CMD_POWER_VL53LXX	0x08	/*´ò¿ª¹Ø±Õ¼¤¹â*/
+/*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
+#define  CMD_GET_MSG		0x01	/*ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½Ô¼ì£©*/
+#define  CMD_GET_CANFLY		0x02	/*ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½Ü·ï¿½*/
+#define  CMD_FLIGHT_LAND	0x03	/*ï¿½ï¿½É¡ï¿½ï¿½ï¿½ï¿½ï¿½*/
+#define  CMD_EMER_STOP		0x04	/*ï¿½ï¿½ï¿½ï¿½Í£ï¿½ï¿½*/
+#define  CMD_FLIP			0x05	/*4Dï¿½ï¿½ï¿½ï¿½*/
+#define  CMD_POWER_MODULE	0x06	/*ï¿½ò¿ª¹Ø±ï¿½ï¿½ï¿½Õ¹Ä£ï¿½ï¿½ï¿½Ô´*/
+#define  CMD_LEDRING_EFFECT	0x07	/*ï¿½ï¿½ï¿½ï¿½RGBï¿½Æ»ï¿½Ð§ï¿½ï¿½*/
+#define  CMD_POWER_VL53LXX	0x08	/*ï¿½ò¿ª¹Ø±Õ¼ï¿½ï¿½ï¿½*/
 
-/*ÉÏÐÐ±¨¸æ*/
+/*ï¿½ï¿½ï¿½Ð±ï¿½ï¿½ï¿½*/
 #define  ACK_MSG			0x01
 
-/*Ò£¿ØÊý¾Ý½á¹¹*/
+/*Ò£ï¿½ï¿½ï¿½ï¿½ï¿½Ý½á¹¹*/
+//ï¿½ï¿½ï¿½ï¿½x,y,depth
 typedef __packed struct
 {
 	float roll;      
@@ -49,6 +51,10 @@ typedef __packed struct
 	u8	ctrlMode;
 	bool flightMode;
 	bool RCLock;
+	// float x;
+	// float y;
+	// float depth;
+	// s16 aruco_id;
 } remoterData_t;
 
 typedef __packed struct
@@ -60,14 +66,13 @@ typedef __packed struct
 	bool isLowpower;
 	enum expModuleID moduleID;
 	
-	float trimRoll;		/*rollÎ¢µ÷*/
-	float trimPitch;	/*pitchÎ¢µ÷*/
+	float trimRoll;		/*rollÎ¢ï¿½ï¿½*/
+	float trimPitch;	/*pitchÎ¢ï¿½ï¿½*/
 } MiniFlyMsg_t;
 
 
 void remoterCtrlProcess(atkp_t* pk);
 void sendMsgACK(void);
-
 
 #endif /* WIFI_CONTROL_H */
 

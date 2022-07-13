@@ -27,7 +27,6 @@ typedef enum
 	LED_RED_R,
 } led_e;
 
-
 #define DATA_RX_LED		LED_GREEN_L	/*无线数据接收指示灯*/
 #define DATA_TX_LED		LED_RED_L	/*无线数据发送指示灯*/
 #define CHG_LED 		LED_BLUE_L	/*充电指示灯*/

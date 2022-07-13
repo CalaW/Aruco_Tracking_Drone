@@ -33,6 +33,14 @@ typedef struct
 	u8 data[ATKP_MAX_DATA_SIZE];
 }atkp_t;
 
+//新增的通讯数据结构
+typedef struct{
+	float x_Now;
+	float y_Now;
+	float depth_Now;
+	s16 My_id;
+}my_send_data;
+
 /*上行指令ID*/
 typedef enum 
 {
@@ -56,8 +64,9 @@ typedef enum
 	UP_MSG			= 0xEE,
 	UP_CHECK		= 0xEF,
 	
-	UP_REMOTOR		= 0x50,
+	UP_REMOTOR	= 0x50,
 	UP_PRINTF		= 0x51,
+	UP_MyData   = 0x52
 }upmsgID_e;
 
 
@@ -89,6 +98,7 @@ typedef enum
 	DOWN_RADIO		= 0x40,
 	
 	DOWN_REMOTOR	= 0x50,
+	DOWN_MyData = 0x52
 }downmsgID_e;
 
 
