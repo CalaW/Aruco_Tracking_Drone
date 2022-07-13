@@ -50,10 +50,6 @@ enum expModuleID
 //新加入x,y,depth
 typedef __packed struct
 {
-	int S_id;
-	float x;
-	float y;
-	float depth;
 	float roll;      
 	float pitch;  
 	float yaw;	
@@ -63,6 +59,10 @@ typedef __packed struct
 	u8 ctrlMode;
 	bool flightMode;
 	bool RCLock;
+	float x;
+	float y;
+  float depth;
+	s16 aruco_id;
 } remoterData_t;
 
 typedef __packed struct
@@ -77,6 +77,7 @@ typedef __packed struct
 	float trimRoll;		/*roll微调*/
 	float trimPitch;	/*pitch微调*/
 } MiniFlyMsg_t;
+
 
 void commanderTask(void* param);
 joystickFlyf_t getFlyControlData(void);

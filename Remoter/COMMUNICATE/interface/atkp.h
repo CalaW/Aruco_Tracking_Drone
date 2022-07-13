@@ -56,8 +56,9 @@ typedef enum
 	UP_MSG			= 0xEE,
 	UP_CHECK		= 0xEF,
 	
-	UP_REMOTOR		= 0x50,
+	UP_REMOTOR	= 0x50,
 	UP_PRINTF		= 0x51,
+	UP_MyData   = 0x52
 }upmsgID_e;
 
 

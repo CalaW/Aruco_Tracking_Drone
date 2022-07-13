@@ -42,10 +42,11 @@
 #define  MAX_YAW			(200.0)
 
 static joystickFlyf_t flydata;
-float x_Now;
-float y_Now;
-float depth_Now;
-int My_id;
+extern float x_Now;
+extern float y_Now;
+extern float depth_Now;
+extern s16 My_id;
+
 
 /*发送遥控命令*/
 void sendRmotorCmd(u8 cmd, u8 data)
@@ -86,17 +87,18 @@ float limit(float value,float min, float max)
 	}
 	return value;
 }
-
+/*
 void upAnalyse(atkp_t *p){
 	x_Now = 0.0;
 	y_Now = 0.0;
 	depth_Now = 0.0;
 	My_id = 0;
-	x_Now = ((int)(p->data[0]) - (int)'0')*100 + ((int)(p->data[1]) - (int)'0')*10 + ((int)(p->data[2]) - (int)'0');
-	y_Now = ((int)(p->data[3]) - (int)'0')*100 + ((int)(p->data[4]) - (int)'0')*10 + ((int)(p->data[5]) - (int)'0');
-	depth_Now = ((int)(p->data[6]) - (int)'0')*100 + ((int)(p->data[7]) - (int)'0')*10 + ((int)(p->data[8]) - (int)'0');
-	My_id = (int)(p->data[9]);
+	x_Now = ((int)(p->data[1]) - (int)'0')*100 + ((int)(p->data[2]) - (int)'0')*10 + ((int)(p->data[3]) - (int)'0');
+	y_Now = ((int)(p->data[4]) - (int)'0')*100 + ((int)(p->data[5]) - (int)'0')*10 + ((int)(p->data[6]) - (int)'0');
+	depth_Now = ((int)(p->data[7]) - (int)'0')*100 + ((int)(p->data[8]) - (int)'0')*10 + ((int)(p->data[9]) - (int)'0');
+	My_id = (s16)(p->data[10]);
 }
+*/
 
 /*发送飞控命令任务*/
 //可能需要添加一个任务
@@ -106,6 +108,10 @@ void commanderTask(void* param)
 	float max_pitch = LOW_SPEED_PITCH;
 	float max_roll = LOW_SPEED_ROLL;
 	joystickFlyf_t  percent;
+	x_Now = 0.0;
+	y_Now = 0.0;
+	depth_Now = 0.0;
+	My_id = 0;
 	
 	while(1)
 	{
@@ -207,7 +213,7 @@ void commanderTask(void* param)
 			send.x = x_Now;
 			send.y = y_Now;
 			send.depth = depth_Now;
-			send.S_id = My_id;
+			send.aruco_id = My_id;
 			
 			/*发送飞控数据*/
 			sendRmotorData((u8*)&send, sizeof(send));

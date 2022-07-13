@@ -119,14 +119,12 @@ void usblinkTxTask(void* param)
 }
 
 /*usb连接接收任务*/
-//可能需要更改代码
 void usblinkRxTask(void *param)
 {
 	u8 c;
 	u8 dataIndex = 0;
 	u8 cksum = 0;
 	rxState = waitForStartByte1;
-	
 	while(1)
 	{
 		if (usbGetDataWithTimout(&c))
@@ -134,83 +132,59 @@ void usblinkRxTask(void *param)
 			switch(rxState)
 			{
 				case waitForStartByte1:
-					//USB_SendData(c);
-					if(c == '1'){
-						rxState = waitForStartByte2;
-						USB_SendData('T');
-					}
-					else{
-						rxState = waitForStartByte1;
-						USB_SendData('F');
-					}
-					//rxState = (c == '1') ? waitForStartByte2 : waitForStartByte1;
-					cksum = c;
-					//USB_SendData('1');
+					rxState = (c == DOWN_BYTE1) ? waitForStartByte2 : waitForStartByte1;
+					cksum = c;  
 					break;
 				case waitForStartByte2:
-					//USB_SendData(c);
-					if(c == '2'){
-						rxState = waitForData;
-						USB_SendData('M');
-					}
-					else{
-						rxState = waitForStartByte1;
-						USB_SendData('N');
-					}
-					//rxState = (c == '2') ? waitForMsgID : waitForStartByte1;
+					rxState = (c == DOWN_BYTE2) ? waitForMsgID : waitForStartByte1;
 					cksum += c;
-					///USB_SendData('2');
 					break;
-				//case waitForMsgID:
-				//	USB_SendData(c);
-				  	//rxPacket.msgID = c;
-				  	//rxState = waitForData;
-				//	cksum += c;
-				//	USB_SendData('3');
-				  //break;
-				//case waitForDataLength:
-				//	rxPacket.dataLen = c;
-				//	rxState =waitForData;
-				//	USB_SendData(c);
-				//	USB_SendData('4');
-				//	break;
+				case waitForMsgID:
+					rxPacket.msgID = c;
+					rxState = waitForDataLength;
+					cksum += c;
+					break;
+				case waitForDataLength:
+					if (c <= ATKP_MAX_DATA_SIZE)
+					{
+						rxPacket.dataLen = c;
+						dataIndex = 0;
+						rxState = waitForData;
+						cksum += c;
+					} else 
+					{
+						rxState = waitForStartByte1;
+					}
+					break;
 				case waitForData:
 					rxPacket.data[dataIndex] = c;
-					//USB_SendData(c);
-					USB_SendData('P');
 					dataIndex++;
-					if(dataIndex==10)
+					cksum += c;
+					if (dataIndex == rxPacket.dataLen)
 					{
-						upAnalyse(&rxPacket);
-						rxState = waitForStartByte1;
-						dataIndex=0;
-					}		
+						rxState = waitForChksum1;
+					}
 					break;
-				//case waitForChksum1:
-					//if (cksum == c)/*所有校验正确*/
-					//USB_SendData(c);
-					//USB_SendData('6');
-					//if(c == '0')
-					//{
-						//xQueueSend(rxQueue, &rxPacket, 0);
+				case waitForChksum1:
+					if (cksum == c)/*所有校验正确*/
+					{
 						//upAnalyse(&rxPacket);
-						//USB_SendData('7');
-					//} 
-					//else
-					//{
-						//rxState = waitForStartByte1;
-					//}
-					//rxState = waitForStartByte1;
-					//break;
+						xQueueSend(rxQueue, &rxPacket, 0);
+					} 
+					else
+					{
+						rxState = waitForStartByte1;
+					}
+					rxState = waitForStartByte1;
+					break;
 				default:
 					break;
 			}
 		}
-		//else	/*超时处理*/
-		//{
-			//rxState = waitForStartByte1;
-			//USB_SendData('S');
-		//}
+		else	/*超时处理*/
+		{
+			rxState = waitForStartByte1;
+		}
 	}
 }
 
