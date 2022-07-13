@@ -236,6 +236,7 @@ static float errorPosZ = 0.f;		/*Zн╩О©╫О©╫О©╫О©╫О©╫*/
 void commanderGetSetpoint(setpoint_t *setpoint, state_t *state)
 {	
 	static float maxAccZ = 0.f;
+	ctrlVal_t ctrlVal =  nowCache->tarVal[nowCache->activeSide];	/*╤ах║╩╨╢Ф*/
 	
 	ctrlDataUpdate();	/*О©╫О©╫О©╫б©О©╫О©╫О©╫О©╫О©╫О©╫О©╫*/
 	
@@ -292,6 +293,13 @@ void commanderGetSetpoint(setpoint_t *setpoint, state_t *state)
 					maxAccZ = 0.f;
 				}
 			}
+			else if(ctrlVal.x != 0 && ctrlVal.y != 0 && ctrlVal.depth != 0) //aruco decide height
+			{
+				isAdjustingPosZ = false;
+				
+				setpoint->mode.z = modeAbs;
+				setpoint->position.z = ctrlVal.aruco_id * 3;39
+			}
 			else if (isAdjustingPosZ == true)
 			{
 				isAdjustingPosZ = false;
@@ -303,7 +311,7 @@ void commanderGetSetpoint(setpoint_t *setpoint, state_t *state)
 			{
 				errorPosZ = setpoint->position.z - state->position.z;
 				errorPosZ = constrainf(errorPosZ, -10.f, 10.f);	/*О©╫О©╫О©╫О©╫ч╥О©╫ О©╫О©╫н╩cm*/
-			}			
+			}
 		}
 		else/*О©╫О©╫б╫в╢л╛*/
 		{
