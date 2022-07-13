@@ -112,7 +112,7 @@ void remoterCtrlProcess(atkp_t* pk)
 				break;
 		}
 	}
-	else if(pk->data[0] == REMOTER_DATA)//����x,y,depth
+	else if(pk->data[0] == REMOTER_DATA)
 	{
 		remoterData_t remoterData = *(remoterData_t*)(pk->data+1);
 		
@@ -123,11 +123,6 @@ void remoterCtrlProcess(atkp_t* pk)
 		remoterCtrl.trimPitch = remoterData.trimPitch;
 		remoterCtrl.trimRoll = remoterData.trimRoll;
 
-		remoterCtrl.x = remoterData.x;
-		remoterCtrl.y = remoterData.y;
-		remoterCtrl.depth = remoterData.depth;
-		remoterCtrl.aruco_id = remoterData.aruco_id;
-		
 		setCommanderCtrlMode(remoterData.ctrlMode);
 		setCommanderFlightmode(remoterData.flightMode);
 		flightCtrldataCache(ATK_REMOTER, remoterCtrl);

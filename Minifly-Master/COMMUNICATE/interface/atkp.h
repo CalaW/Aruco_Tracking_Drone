@@ -3,34 +3,34 @@
 #include <stdint.h>
 #include <stdbool.h>
 /********************************************************************************	 
- * ±¾³ÌÐòÖ»¹©Ñ§Ï°Ê¹ÓÃ£¬Î´¾­×÷ÕßÐí¿É£¬²»µÃÓÃÓÚÆäËüÈÎºÎÓÃÍ¾
+ * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö»ï¿½ï¿½Ñ§Ï°Ê¹ï¿½Ã£ï¿½Î´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îºï¿½ï¿½ï¿½Í¾
  * ALIENTEK MiniFly
- * ·É¿ØÍ¨Ñ¶Ð­Òé¸ñÊ½´úÂë
- * ÕýµãÔ­×Ó@ALIENTEK
- * ¼¼ÊõÂÛÌ³:www.openedv.com
- * ´´½¨ÈÕÆÚ:2017/5/12
- * °æ±¾£ºV1.3
- * °æÈ¨ËùÓÐ£¬µÁ°æ±Ø¾¿¡£
- * Copyright(C) ¹ãÖÝÊÐÐÇÒíµç×Ó¿Æ¼¼ÓÐÏÞ¹«Ë¾ 2014-2024
+ * ï¿½É¿ï¿½Í¨Ñ¶Ð­ï¿½ï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½
+ * ï¿½ï¿½ï¿½ï¿½Ô­ï¿½ï¿½@ALIENTEK
+ * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì³:www.openedv.com
+ * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½:2017/5/12
+ * ï¿½æ±¾ï¿½ï¿½V1.3
+ * ï¿½ï¿½È¨ï¿½ï¿½ï¿½Ð£ï¿½ï¿½ï¿½ï¿½ï¿½Ø¾ï¿½ï¿½ï¿½
+ * Copyright(C) ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¿Æ¼ï¿½ï¿½ï¿½ï¿½Þ¹ï¿½Ë¾ 2014-2024
  * All rights reserved
- * ËµÃ÷£º±¾¸ñÊ½²¿·Ö»ùÓÚÄäÃûÉÏÎ»»úÍ¨Ñ¶Ð­Òé±àÐ´
+ * Ëµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê½ï¿½ï¿½ï¿½Ö»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½Í¨Ñ¶Ð­ï¿½ï¿½ï¿½Ð´
  *
- * ÐÞ¸ÄËµÃ÷:
- * °æ±¾V1.3 Ôö¼ÓÓÃ»§Êý¾Ý(USERDATA)ÉÏ´«¹¦ÄÜ£¬·½±ãÓÃ»§ÉÏ´«ÐèÒªµ÷ÊÔµÄÊý¾Ýµ½ÉÏÎ»»ú£¬
- * ÉÏÎ»»úÊµÊ±´òÓ¡²¨ÐÎ£¬·½±ãÓÃ»§µ÷ÊÔ¡£
+ * ï¿½Þ¸ï¿½Ëµï¿½ï¿½:
+ * ï¿½æ±¾V1.3 ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½(USERDATA)ï¿½Ï´ï¿½ï¿½ï¿½ï¿½Ü£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½Ï´ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½Ôµï¿½ï¿½ï¿½ï¿½Ýµï¿½ï¿½ï¿½Î»ï¿½ï¿½ï¿½ï¿½
+ * ï¿½ï¿½Î»ï¿½ï¿½ÊµÊ±ï¿½ï¿½Ó¡ï¿½ï¿½ï¿½Î£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½Ô¡ï¿½
 ********************************************************************************/
 
-/*ÉÏÐÐÖ¡Í·*/
+/*Uplink Frame header*/
 #define UP_BYTE1 0xAA
 #define UP_BYTE2 0xAA
 
-/*ÏÂÐÐÖ¡Í·*/
+/*Downlink Frame header*/
 #define DOWN_BYTE1 0xAA
 #define DOWN_BYTE2 0xAF
 
 #define ATKP_MAX_DATA_SIZE 30
 
-/*Í¨Ñ¶Êý¾Ý½á¹¹*/
+/*Communicate data structure*/
 typedef struct
 {
 	uint8_t msgID;
@@ -38,7 +38,7 @@ typedef struct
 	uint8_t data[ATKP_MAX_DATA_SIZE];
 }atkp_t;
 
-/*ÉÏÐÐÖ¸ÁîID*/
+/*Uplink data id*/
 typedef enum 
 {
 	UP_VERSION		= 0x00,
@@ -63,6 +63,7 @@ typedef enum
 	
 	UP_REMOTER		= 0x50,
 	UP_PRINTF		= 0x51,
+	UP_MYDATA		= 0x52, //Uplink Mydata id
 	
 	UP_USER_DATA1	= 0xF1,
 	UP_USER_DATA2	= 0xF2,
@@ -77,7 +78,7 @@ typedef enum
 }upmsgID_e;
 
 
-/*ÏÂÐÐÖ¸Áî*/
+/*Downlink command*/
 #define  D_COMMAND_ACC_CALIB		0x01
 #define  D_COMMAND_GYRO_CALIB		0x02
 #define  D_COMMAND_MAG_CALIB		0x04
@@ -95,7 +96,7 @@ typedef enum
 #define  D_ACK_READ_PID				0x01
 #define  D_ACK_READ_VERSION			0xA0
 #define  D_ACK_RESET_PARAM			0xA1
-/*ÏÂÐÐÖ¸ÁîID*/
+/*Downlink data id*/
 typedef enum 
 {
 	DOWN_COMMAND	= 0x01,
@@ -112,6 +113,7 @@ typedef enum
 	DOWN_RADIO		= 0x40,
 	
 	DOWN_REMOTER	= 0x50,
+	DOWN_MYDATA		= 0x52, //Downlink Mydata id
 }downmsgID_e;
 
 

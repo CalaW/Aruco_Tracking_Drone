@@ -110,14 +110,15 @@ static void ctrlDataUpdate(void)
 //		ctrlValLpf.pitch = ctrlVal.pitch;
 //		ctrlValLpf.roll = ctrlVal.roll;
 //		ctrlValLpf.yaw = ctrlVal.yaw;
-		ctrlValLpf.x = ctrlVal.x;
-		ctrlValLpf.y = ctrlVal.y;
-		ctrlValLpf.depth = ctrlVal.depth;
-		ctrlValLpf.aruco_id = ctrlVal.aruco_id;
 		ctrlValLpf.thrust += (ctrlVal.thrust - ctrlValLpf.thrust) * lpfVal;
 		ctrlValLpf.pitch += (ctrlVal.pitch - ctrlValLpf.pitch) * lpfVal;
 		ctrlValLpf.roll += (ctrlVal.roll - ctrlValLpf.roll) * lpfVal;
 		ctrlValLpf.yaw += (ctrlVal.yaw - ctrlValLpf.yaw) * lpfVal;
+
+		// ctrlValLpf.x += (ctrlVal.x - ctrlValLpf.x) * lpfVal;
+		// ctrlValLpf.y += (ctrlVal.y - ctrlValLpf.y) * lpfVal;
+		// ctrlValLpf.depth += (ctrlVal.depth - ctrlValLpf.depth) * lpfVal;
+		// ctrlValLpf.aruco_id = ctrlVal.aruco_id;
 		
 		configParam.trimP = ctrlVal.trimPitch;	/*����΢��ֵ*/
 		configParam.trimR = ctrlVal.trimRoll;

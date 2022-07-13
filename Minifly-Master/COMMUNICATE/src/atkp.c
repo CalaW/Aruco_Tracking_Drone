@@ -386,8 +386,8 @@ static void atkpSendPeriod(void)
 		sendUserData(1, acc.x, acc.y, acc.z, vel.x, vel.y, vel.z, pos.x, pos.y, pos.z);
 		sendUserData(2, opFlow.velLpf[X],opFlow.velLpf[Y],opFlow.posSum[X],opFlow.posSum[Y],
 						0,getFusedHeight(),vl53lxx.distance,100.f*vl53lxx.quality,thrustBase);
-		sendUserData(3, (s16)remoterCtrl.x, (s16)remoterCtrl.y, (s16)remoterCtrl.depth
-						, (s16)remoterCtrl.aruco_id, 0, 0, 0, 0, 0);
+		// sendUserData(3, (s16)remoterCtrl.x, (s16)remoterCtrl.y, (s16)remoterCtrl.depth
+		// 				, (s16)remoterCtrl.aruco_id, 0, 0, 0, 0, 0);
 	}
 	if(!(count_ms % PERIOD_RCDATA))
 	{
@@ -608,6 +608,10 @@ static void atkpReceiveAnl(atkp_t *anlPacket)
 		positionPIDwriteToConfigParam();
 		u8 cksum = atkpCheckSum(anlPacket);
 		sendCheck(anlPacket->msgID,cksum);
+	}
+	else if(anlPacket->msgID == DOWN_MYDATA)
+	{
+		
 	}
 } 
 

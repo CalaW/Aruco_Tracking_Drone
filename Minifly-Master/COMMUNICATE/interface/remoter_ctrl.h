@@ -51,10 +51,10 @@ typedef __packed struct
 	u8	ctrlMode;
 	bool flightMode;
 	bool RCLock;
-	float x;
-	float y;
-	float depth;
-	s16 aruco_id;
+	// float x;
+	// float y;
+	// float depth;
+	// s16 aruco_id;
 } remoterData_t;
 
 typedef __packed struct
@@ -73,9 +73,6 @@ typedef __packed struct
 
 void remoterCtrlProcess(atkp_t* pk);
 void sendMsgACK(void);
-
-extern ctrlVal_t remoterCtrl;/*���͵�commander��̬��������*/
-
 
 #endif /* WIFI_CONTROL_H */
 

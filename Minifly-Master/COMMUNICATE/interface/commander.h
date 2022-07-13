@@ -31,7 +31,6 @@ typedef struct
 }commanderBits_t;
 
 /*�������ݽṹ��*/
-//����x,y,depth
 typedef __packed struct
 {
 	float roll;       // deg
@@ -40,10 +39,10 @@ typedef __packed struct
 	float trimPitch;
 	float trimRoll;
 	u16 thrust;
-	float x;
-	float y;
-	float depth;
-	s16 aruco_id;
+	// float x;
+	// float y;
+	// float depth;
+	// s16 aruco_id;
 } ctrlVal_t;
 
 /*���ݻ���ṹ��*/
