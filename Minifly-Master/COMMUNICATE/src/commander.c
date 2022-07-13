@@ -11,20 +11,20 @@
 #include "module_mgt.h"
 #include "optical_flow.h"
 
-/*FreeRTOSÏà¹ØÍ·ÎÄ¼þ*/
+/*FreeRTOSï¿½ï¿½ï¿½Í·ï¿½Ä¼ï¿½*/
 #include "FreeRTOS.h"
 #include "task.h"
 
 /********************************************************************************	 
- * ±¾³ÌÐòÖ»¹©Ñ§Ï°Ê¹ÓÃ£¬Î´¾­×÷ÕßÐí¿É£¬²»µÃÓÃÓÚÆäËüÈÎºÎÓÃÍ¾
+ * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö»ï¿½ï¿½Ñ§Ï°Ê¹ï¿½Ã£ï¿½Î´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îºï¿½ï¿½ï¿½Í¾
  * ALIENTEK MiniFly
- * »ñÈ¡Ò£¿ØÊý¾ÝÇý¶¯´úÂë
- * ÕýµãÔ­×Ó@ALIENTEK
- * ¼¼ÊõÂÛÌ³:www.openedv.com
- * ´´½¨ÈÕÆÚ:2017/5/12
- * °æ±¾£ºV1.3
- * °æÈ¨ËùÓÐ£¬µÁ°æ±Ø¾¿¡£
- * Copyright(C) ¹ãÖÝÊÐÐÇÒíµç×Ó¿Æ¼¼ÓÐÏÞ¹«Ë¾ 2014-2024
+ * ï¿½ï¿½È¡Ò£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+ * ï¿½ï¿½ï¿½ï¿½Ô­ï¿½ï¿½@ALIENTEK
+ * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì³:www.openedv.com
+ * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½:2017/5/12
+ * ï¿½æ±¾ï¿½ï¿½V1.3
+ * ï¿½ï¿½È¨ï¿½ï¿½ï¿½Ð£ï¿½ï¿½ï¿½ï¿½ï¿½Ø¾ï¿½ï¿½ï¿½
+ * Copyright(C) ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¿Æ¼ï¿½ï¿½ï¿½ï¿½Þ¹ï¿½Ë¾ 2014-2024
  * All rights reserved
 ********************************************************************************/
 
@@ -35,16 +35,16 @@
 #define MIN_THRUST  	5000
 #define MAX_THRUST  	60000
 
-static bool isRCLocked;				/* Ò£¿ØËø¶¨×´Ì¬ */
-static ctrlValCache_t remoteCache;	/* Ò£¿Ø»º´æÊý¾Ý */
-static ctrlValCache_t wifiCache;	/* wifi»º´æÊý¾Ý */
-static ctrlValCache_t* nowCache = &remoteCache;/*Ä¬ÈÏÎªÒ£¿Ø*/
-static ctrlVal_t ctrlValLpf = {0.f};/* ¿ØÖÆÊý¾ÝµÍÍ¨ */
+static bool isRCLocked;				/* Ò£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬ */
+static ctrlValCache_t remoteCache;	/* Ò£ï¿½Ø»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ */
+static ctrlValCache_t wifiCache;	/* wifiï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ */
+static ctrlValCache_t* nowCache = &remoteCache;/*Ä¬ï¿½ï¿½ÎªÒ£ï¿½ï¿½*/
+static ctrlVal_t ctrlValLpf = {0.f};/* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ýµï¿½Í¨ */
 
 static float minAccZ = 0.f; 
 static float maxAccZ = 0.f; 
 
-static YawModeType yawMode = XMODE;	/* Ä¬ÈÏÎªX·ÉÐÐÄ£Ê½ */
+static YawModeType yawMode = XMODE;	/* Ä¬ï¿½ï¿½ÎªXï¿½ï¿½ï¿½ï¿½Ä£Ê½ */
 static commanderBits_t commander;
 
 static void commanderLevelRPY(void)
@@ -58,7 +58,7 @@ static void commanderDropToGround(void)
 {
 	commanderLevelRPY();
 	ctrlValLpf.thrust = 0;
-	if(commander.keyFlight)	/*·ÉÐÐ¹ý³ÌÖÐ£¬Ò£¿ØÆ÷ÐÅºÅ¶Ï¿ª£¬Ò»¼ü½µÂä*/
+	if(commander.keyFlight)	/*ï¿½ï¿½ï¿½Ð¹ï¿½ï¿½ï¿½ï¿½Ð£ï¿½Ò£ï¿½ï¿½ï¿½ï¿½ï¿½ÅºÅ¶Ï¿ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
 	{
 		commander.keyLand = true;
 		commander.keyFlight = false;
@@ -66,8 +66,8 @@ static void commanderDropToGround(void)
 }
 u32 timestamp = 0;
 /********************************************************
- *ctrlDataUpdate()	¸üÐÂ¿ØÖÆÊý¾Ý
- *Ò£¿ØÊý¾Ý ÓÅÏÈ¼¶¸ßÓÚwifi¿ØÖÆÊý¾Ý
+ *ctrlDataUpdate()	ï¿½ï¿½ï¿½Â¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+ *Ò£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½È¼ï¿½ï¿½ï¿½ï¿½ï¿½wifiï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 *********************************************************/
 static void ctrlDataUpdate(void)	
 {
@@ -78,33 +78,33 @@ static void ctrlDataUpdate(void)
 	
 	if ((tickNow - remoteCache.timestamp) < COMMANDER_WDT_TIMEOUT_STABILIZE) 
 	{
-		isRCLocked = false;			/*½âËø*/
-		nowCache = &remoteCache;	/* Ò£¿Ø»º´æÊý¾Ý */
+		isRCLocked = false;			/*ï¿½ï¿½ï¿½ï¿½*/
+		nowCache = &remoteCache;	/* Ò£ï¿½Ø»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ */
 	}else 
 	if ((tickNow - wifiCache.timestamp) < COMMANDER_WDT_TIMEOUT_STABILIZE) 
 	{
-		isRCLocked = false;			/*½âËø*/
-		nowCache = &wifiCache;		/* wifi»º´æÊý¾Ý */
+		isRCLocked = false;			/*ï¿½ï¿½ï¿½ï¿½*/
+		nowCache = &wifiCache;		/* wifiï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ */
 	}else 
 	if ((tickNow - remoteCache.timestamp) < COMMANDER_WDT_TIMEOUT_SHUTDOWN) 
 	{
-		nowCache = &remoteCache;	/* Ò£¿Ø»º´æÊý¾Ý */
+		nowCache = &remoteCache;	/* Ò£ï¿½Ø»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ */
 		commanderLevelRPY();
 	}else 
 	if ((tickNow - wifiCache.timestamp) < COMMANDER_WDT_TIMEOUT_SHUTDOWN) 
 	{
-		nowCache = &wifiCache;		/* wifi»º´æÊý¾Ý */
+		nowCache = &wifiCache;		/* wifiï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ */
 		commanderLevelRPY();
 	} else 
 	{
-		isRCLocked = true;			/*Ëø¶¨*/
+		isRCLocked = true;			/*ï¿½ï¿½ï¿½ï¿½*/
 		nowCache = &remoteCache;
 		commanderDropToGround();
 	}
 	
-	if(isRCLocked == false)	/*½âËø×´Ì¬*/
+	if(isRCLocked == false)	/*ï¿½ï¿½ï¿½ï¿½×´Ì¬*/
 	{
-		ctrlVal_t ctrlVal =  nowCache->tarVal[nowCache->activeSide];	/*¶ÁÈ¡»º´æ*///Ôö¼Óx,y,d
+		ctrlVal_t ctrlVal =  nowCache->tarVal[nowCache->activeSide];	/*ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½*///ï¿½ï¿½ï¿½ï¿½x,y,d
 		
 //		ctrlValLpf.thrust = ctrlVal.thrust;
 //		ctrlValLpf.pitch = ctrlVal.pitch;
@@ -113,12 +113,13 @@ static void ctrlDataUpdate(void)
 		ctrlValLpf.x = ctrlVal.x;
 		ctrlValLpf.y = ctrlVal.y;
 		ctrlValLpf.depth = ctrlVal.depth;
+		ctrlValLpf.aruco_id = ctrlVal.aruco_id;
 		ctrlValLpf.thrust += (ctrlVal.thrust - ctrlValLpf.thrust) * lpfVal;
 		ctrlValLpf.pitch += (ctrlVal.pitch - ctrlValLpf.pitch) * lpfVal;
 		ctrlValLpf.roll += (ctrlVal.roll - ctrlValLpf.roll) * lpfVal;
 		ctrlValLpf.yaw += (ctrlVal.yaw - ctrlValLpf.yaw) * lpfVal;
 		
-		configParam.trimP = ctrlVal.trimPitch;	/*¸üÐÂÎ¢µ÷Öµ*/
+		configParam.trimP = ctrlVal.trimPitch;	/*ï¿½ï¿½ï¿½ï¿½Î¢ï¿½ï¿½Öµ*/
 		configParam.trimR = ctrlVal.trimRoll;
 		
 		if (ctrlValLpf.thrust < MIN_THRUST)
@@ -129,8 +130,8 @@ static void ctrlDataUpdate(void)
 }
 
 /************************************************************************
-* ËÄÖácarefree(ÎÞÍ·Ä£Ê½)£¬²Î¿¼ÊÀ½ç×ø±êÏµ£¬µ±ËÄÖáÎ§ÈÆYAWÐý×ªºó£¬
-* ËÄÖáÇ°·½ÈÎÈ»±£³Ö¿ªÊ¼µÄ·½Ïò£¬Õâ¸öÄ£Ê½¶ÔÐÂÊÖ·Ç³£ÊµÓÃ
+* ï¿½ï¿½ï¿½ï¿½carefree(ï¿½ï¿½Í·Ä£Ê½)ï¿½ï¿½ï¿½Î¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ïµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î§ï¿½ï¿½YAWï¿½ï¿½×ªï¿½ï¿½
+* ï¿½ï¿½ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½È»ï¿½ï¿½ï¿½Ö¿ï¿½Ê¼ï¿½Ä·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä£Ê½ï¿½ï¿½ï¿½ï¿½ï¿½Ö·Ç³ï¿½Êµï¿½ï¿½
 ************************************************************************/
 static void rotateYawCarefree(setpoint_t *setpoint, const state_t *state)
 {
@@ -138,7 +139,7 @@ static void rotateYawCarefree(setpoint_t *setpoint, const state_t *state)
 	float cosy = cosf(yawRad);
 	float siny = sinf(yawRad);
 	
-	if(setpoint->mode.x ==  modeDisable || setpoint->mode.y ==  modeDisable)	/*ÊÖ¶¯ºÍ¶¨¸ßÄ£Ê½*/
+	if(setpoint->mode.x ==  modeDisable || setpoint->mode.y ==  modeDisable)	/*ï¿½Ö¶ï¿½ï¿½Í¶ï¿½ï¿½ï¿½Ä£Ê½*/
 	{
 		float originalRoll = setpoint->attitude.roll;
 		float originalPitch = setpoint->attitude.pitch;
@@ -146,7 +147,7 @@ static void rotateYawCarefree(setpoint_t *setpoint, const state_t *state)
 		setpoint->attitude.roll = originalRoll * cosy + originalPitch * siny;
 		setpoint->attitude.pitch = originalPitch * cosy - originalRoll * siny;
 	}
-	else if(setpoint->mode.x ==  modeVelocity || setpoint->mode.y ==  modeVelocity)	/*¶¨µãÄ£Ê½*/
+	else if(setpoint->mode.x ==  modeVelocity || setpoint->mode.y ==  modeVelocity)	/*ï¿½ï¿½ï¿½ï¿½Ä£Ê½*/
 	{
 		float originalVy = setpoint->velocity.y;
 		float originalVx = setpoint->velocity.x;
@@ -156,7 +157,7 @@ static void rotateYawCarefree(setpoint_t *setpoint, const state_t *state)
 	}
 }
 
-/*·É¿ØÊý¾Ý»º´æ*/
+/*ï¿½É¿ï¿½ï¿½ï¿½ï¿½Ý»ï¿½ï¿½ï¿½*/
 void flightCtrldataCache(ctrlSrc_e ctrlSrc, ctrlVal_t pk)
 {
 	switch(ctrlSrc)
@@ -177,10 +178,10 @@ void flightCtrldataCache(ctrlSrc_e ctrlSrc, ctrlVal_t pk)
 	}
 }
 
-extern bool isExitFlip;			/*ÊÇ·ñÍË³ö¿Õ·­*/
+extern bool isExitFlip;			/*ï¿½Ç·ï¿½ï¿½Ë³ï¿½ï¿½Õ·ï¿½*/
 /********************************************************
 * flyerAutoLand()
-* ËÄÖá×Ô¶¯½µÂä
+* ï¿½ï¿½ï¿½ï¿½ï¿½Ô¶ï¿½ï¿½ï¿½ï¿½ï¿½
 *********************************************************/
 void flyerAutoLand(setpoint_t *setpoint,const state_t *state)
 {	
@@ -188,10 +189,10 @@ void flyerAutoLand(setpoint_t *setpoint,const state_t *state)
 	static float stateVelLpf  = -30.f;
 	
 	setpoint->mode.z = modeVelocity;
-	stateVelLpf += (state->velocity.z -  stateVelLpf) * 0.1f;	/*ËÙÂÊµÍÍ¨*/
-	setpoint->velocity.z = -70.f - stateVelLpf;	/*½µÂäËÙ¶È µ¥Î»cm/s*/
+	stateVelLpf += (state->velocity.z -  stateVelLpf) * 0.1f;	/*ï¿½ï¿½ï¿½Êµï¿½Í¨*/
+	setpoint->velocity.z = -70.f - stateVelLpf;	/*ï¿½ï¿½ï¿½ï¿½ï¿½Ù¶ï¿½ ï¿½ï¿½Î»cm/s*/
 
-	if(getAltholdThrust() < 20000.f)	/*¶¨¸ßÓÍÃÅÖµ½ÏµÍ*/
+	if(getAltholdThrust() < 20000.f)	/*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½Ïµï¿½*/
 	{
 		lowThrustCnt++;
 		if(lowThrustCnt > 10)
@@ -199,14 +200,14 @@ void flyerAutoLand(setpoint_t *setpoint,const state_t *state)
 			lowThrustCnt = 0;
 			commander.keyLand = false;
 			commander.keyFlight = false;
-			estRstAll();	/*¸´Î»¹À²â*/
+			estRstAll();	/*ï¿½ï¿½Î»ï¿½ï¿½ï¿½ï¿½*/
 		}	
 	}else
 	{
 		lowThrustCnt = 0;
 	}
 	
-	if(isExitFlip == true)	/*ÍË³ö¿Õ·­£¬ÔÙ¼ì²â¼ÓËÙ¶È*/
+	if(isExitFlip == true)	/*ï¿½Ë³ï¿½ï¿½Õ·ï¿½ï¿½ï¿½ï¿½Ù¼ï¿½ï¿½ï¿½ï¿½Ù¶ï¿½*/
 	{
 		float accZ = state->acc.z;
 		if(minAccZ > accZ)
@@ -219,34 +220,34 @@ void flyerAutoLand(setpoint_t *setpoint,const state_t *state)
 	{
 		commander.keyLand = false;
 		commander.keyFlight = false;
-		estRstAll();	/*¸´Î»¹À²â*/
+		estRstAll();	/*ï¿½ï¿½Î»ï¿½ï¿½ï¿½ï¿½*/
 	}	
 }
 
 static bool initHigh = false;
-static bool isAdjustingPosZ = false;/*µ÷ÕûZÎ»ÖÃ*/
-static bool isAdjustingPosXY = true;/*µ÷ÕûXYÎ»ÖÃ*/
-static u8 adjustPosXYTime = 0;		/*XYÎ»ÖÃµ÷ÕûÊ±¼ä*/
-static float errorPosX = 0.f;		/*XÎ»ÒÆÎó²î*/
-static float errorPosY = 0.f;		/*YÎ»ÒÆÎó²î*/
-static float errorPosZ = 0.f;		/*ZÎ»ÒÆÎó²î*/
+static bool isAdjustingPosZ = false;/*ï¿½ï¿½ï¿½ï¿½ZÎ»ï¿½ï¿½*/
+static bool isAdjustingPosXY = true;/*ï¿½ï¿½ï¿½ï¿½XYÎ»ï¿½ï¿½*/
+static u8 adjustPosXYTime = 0;		/*XYÎ»ï¿½Ãµï¿½ï¿½ï¿½Ê±ï¿½ï¿½*/
+static float errorPosX = 0.f;		/*XÎ»ï¿½ï¿½ï¿½ï¿½ï¿½*/
+static float errorPosY = 0.f;		/*YÎ»ï¿½ï¿½ï¿½ï¿½ï¿½*/
+static float errorPosZ = 0.f;		/*ZÎ»ï¿½ï¿½ï¿½ï¿½ï¿½*/
 
 
 void commanderGetSetpoint(setpoint_t *setpoint, state_t *state)
 {	
 	static float maxAccZ = 0.f;
 	
-	ctrlDataUpdate();	/*¸üÐÂ¿ØÖÆÊý¾Ý*/
+	ctrlDataUpdate();	/*ï¿½ï¿½ï¿½Â¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
 	
-	state->isRCLocked = isRCLocked;	/*¸üÐÂÒ£¿ØÆ÷Ëø¶¨×´Ì¬*/
+	state->isRCLocked = isRCLocked;	/*ï¿½ï¿½ï¿½ï¿½Ò£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬*/
 	
-	if(commander.ctrlMode & 0x01)/*¶¨¸ßÄ£Ê½*/
+	if(commander.ctrlMode & 0x01)/*ï¿½ï¿½ï¿½ï¿½Ä£Ê½*/
 	{
-		if(commander.keyLand)/*Ò»¼ü½µÂä*/
+		if(commander.keyLand)/*Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
 		{
 			flyerAutoLand(setpoint, state);
 		}
-		else if(commander.keyFlight)/*Ò»¼üÆð·É*/ 
+		else if(commander.keyFlight)/*Ò»ï¿½ï¿½ï¿½ï¿½ï¿½*/ 
 		{	
 			setpoint->thrust = 0;
 			setpoint->mode.z = modeAbs;		
@@ -259,7 +260,7 @@ void commanderGetSetpoint(setpoint_t *setpoint, state_t *state)
 				errorPosY = 0.f;
 				errorPosZ = 0.f;
 
-				setFastAdjustPosParam(0, 1, 80.f);	/*Ò»¼üÆð·É¸ß¶È80cm*/															
+				setFastAdjustPosParam(0, 1, 80.f);	/*Ò»ï¿½ï¿½ï¿½ï¿½É¸ß¶ï¿½80cm*/															
 			}		
 				
 			float climb = ((ctrlValLpf.thrust - 32767.f) / 32767.f);
@@ -274,16 +275,16 @@ void commanderGetSetpoint(setpoint_t *setpoint, state_t *state)
 				setpoint->mode.z = modeVelocity;
 				setpoint->velocity.z = climb;
 
-				if(climb < -(CLIMB_RATE/5.f))	/*ÓÍÃÅÏÂÀ­¹ý´ó*/
+				if(climb < -(CLIMB_RATE/5.f))	/*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
 				{
-					if(isExitFlip == true)		/*ÍË³ö¿Õ·­£¬ÔÙ¼ì²â¼ÓËÙ¶È*/
+					if(isExitFlip == true)		/*ï¿½Ë³ï¿½ï¿½Õ·ï¿½ï¿½ï¿½ï¿½Ù¼ï¿½ï¿½ï¿½ï¿½Ù¶ï¿½*/
 					{
 						if(maxAccZ < state->acc.z)
 							maxAccZ = state->acc.z;
-						if(maxAccZ > 250.f)		/*ÓÍÃÅÏÂÀ­¹ý´ó£¬·É»ú´¥µØÍ£»ú*/
+						if(maxAccZ > 250.f)		/*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ó£¬·É»ï¿½ï¿½ï¿½ï¿½ï¿½Í£ï¿½ï¿½*/
 						{
 							commander.keyFlight = false;
-							estRstAll();	/*¸´Î»¹À²â*/
+							estRstAll();	/*ï¿½ï¿½Î»ï¿½ï¿½ï¿½ï¿½*/
 						}
 					}
 				}else
@@ -296,15 +297,15 @@ void commanderGetSetpoint(setpoint_t *setpoint, state_t *state)
 				isAdjustingPosZ = false;
 			
 				setpoint->mode.z = modeAbs;
-				setpoint->position.z = state->position.z + errorPosZ;	/*µ÷ÕûÐÂÎ»ÖÃ*/									
+				setpoint->position.z = state->position.z + errorPosZ;	/*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½*/									
 			}
-			else if(isAdjustingPosZ == false)	/*ZÎ»ÒÆÎó²î*/
+			else if(isAdjustingPosZ == false)	/*ZÎ»ï¿½ï¿½ï¿½ï¿½ï¿½*/
 			{
 				errorPosZ = setpoint->position.z - state->position.z;
-				errorPosZ = constrainf(errorPosZ, -10.f, 10.f);	/*Îó²îÏÞ·ù µ¥Î»cm*/
+				errorPosZ = constrainf(errorPosZ, -10.f, 10.f);	/*ï¿½ï¿½ï¿½ï¿½Þ·ï¿½ ï¿½ï¿½Î»cm*/
 			}			
 		}
-		else/*×ÅÂ½×´Ì¬*/
+		else/*ï¿½ï¿½Â½×´Ì¬*/
 		{
 			setpoint->mode.z = modeDisable;
 			setpoint->thrust = 0;
@@ -314,7 +315,7 @@ void commanderGetSetpoint(setpoint_t *setpoint, state_t *state)
 			isAdjustingPosZ = false;
 		}
 	}
-	else /*ÊÖ¶¯·ÉÄ£Ê½*/
+	else /*ï¿½Ö¶ï¿½ï¿½ï¿½Ä£Ê½*/
 	{
 		setpoint->mode.z = modeDisable;
 		setpoint->thrust = ctrlValLpf.thrust;
@@ -322,13 +323,13 @@ void commanderGetSetpoint(setpoint_t *setpoint, state_t *state)
  	
 	setpoint->attitude.roll = ctrlValLpf.roll;
 	setpoint->attitude.pitch = ctrlValLpf.pitch;
-	setpoint->attitude.yaw  = -ctrlValLpf.yaw;	/*Ò¡¸Ë·½ÏòºÍyaw·½ÏòÏà·´*/
+	setpoint->attitude.yaw  = -ctrlValLpf.yaw;	/*Ò¡ï¿½Ë·ï¿½ï¿½ï¿½ï¿½yawï¿½ï¿½ï¿½ï¿½ï¿½à·´*/
 	
-	if(getOpDataState() && commander.ctrlMode == 0x03)	/*¹âÁ÷Êý¾Ý¿ÉÓÃ£¬¶¨µãÄ£Ê½*/ 
+	if(getOpDataState() && commander.ctrlMode == 0x03)	/*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý¿ï¿½ï¿½Ã£ï¿½ï¿½ï¿½ï¿½ï¿½Ä£Ê½*/ 
 	{
-		setpoint->attitude.yaw *= 0.5f;	/*¶¨µãÄ£Ê½¼õÂýyawµ÷½Ú*/
+		setpoint->attitude.yaw *= 0.5f;	/*ï¿½ï¿½ï¿½ï¿½Ä£Ê½ï¿½ï¿½ï¿½ï¿½yawï¿½ï¿½ï¿½ï¿½*/
 		
-		/*µ÷ÕûÎ»ÖÃ ËÙ¶ÈÄ£Ê½*/
+		/*ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½ ï¿½Ù¶ï¿½Ä£Ê½*/
 		if(fabsf(setpoint->attitude.roll) > 1.5f || fabsf(setpoint->attitude.pitch) > 1.5f)
 		{
 			adjustPosXYTime = 0;
@@ -347,18 +348,18 @@ void commanderGetSetpoint(setpoint_t *setpoint, state_t *state)
 			}		
 			setpoint->mode.x = modeAbs;
 			setpoint->mode.y = modeAbs;
-			setpoint->position.x = state->position.x + errorPosX;	//µ÷ÕûÐÂÎ»ÖÃ
-			setpoint->position.y = state->position.y + errorPosY;	//µ÷ÕûÐÂÎ»ÖÃ
+			setpoint->position.x = state->position.x + errorPosX;	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½
+			setpoint->position.y = state->position.y + errorPosY;	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½
 		}
-		else if(isAdjustingPosXY == false)	/*Î»ÒÆÎó²î*/
+		else if(isAdjustingPosXY == false)	/*Î»ï¿½ï¿½ï¿½ï¿½ï¿½*/
 		{	
 			errorPosX = setpoint->position.x - state->position.x;
 			errorPosY = setpoint->position.y - state->position.y;
-			errorPosX = constrainf(errorPosX, -30.0f, 30.0f);	/*Îó²îÏÞ·ù µ¥Î»cm*/
-			errorPosY = constrainf(errorPosY, -30.0f, 30.0f);	/*Îó²îÏÞ·ù µ¥Î»cm*/
+			errorPosX = constrainf(errorPosX, -30.0f, 30.0f);	/*ï¿½ï¿½ï¿½ï¿½Þ·ï¿½ ï¿½ï¿½Î»cm*/
+			errorPosY = constrainf(errorPosY, -30.0f, 30.0f);	/*ï¿½ï¿½ï¿½ï¿½Þ·ï¿½ ï¿½ï¿½Î»cm*/
 		}
 	}
-	else	/*ÊÖ¶¯Ä£Ê½*/
+	else	/*ï¿½Ö¶ï¿½Ä£Ê½*/
 	{
 		setpoint->mode.x = modeDisable;
 		setpoint->mode.y = modeDisable;		
@@ -367,18 +368,18 @@ void commanderGetSetpoint(setpoint_t *setpoint, state_t *state)
 	setpoint->mode.roll = modeDisable;	
 	setpoint->mode.pitch = modeDisable;	
 	
-	if(commander.flightMode)/*ÎÞÍ·Ä£Ê½*/
+	if(commander.flightMode)/*ï¿½ï¿½Í·Ä£Ê½*/
 	{
 		yawMode = CAREFREE;		
 		rotateYawCarefree(setpoint, state);
 	}		
-	else	/*X·ÉÐÐÄ£Ê½*/
+	else	/*Xï¿½ï¿½ï¿½ï¿½Ä£Ê½*/
 	{
 		yawMode = XMODE;
 	}		
 }
 
-/* ¶ÁÈ¡²¢¸üÐÂÎ¢µ÷Öµ */
+/* ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î¢ï¿½ï¿½Öµ */
 void getAndUpdateTrim(float* pitch, float* roll)
 {
 	*pitch = nowCache->tarVal[nowCache->activeSide].trimPitch;
@@ -402,7 +403,7 @@ u8 getCommanderFlightMode(void)
 void setCommanderKeyFlight(bool set)
 {
 	commander.keyFlight = set;
-	if(set == true)	/*Ò»¼üÆð·É£¬ÇåÁã×î´ó×îÐ¡Öµ*/
+	if(set == true)	/*Ò»ï¿½ï¿½ï¿½ï¿½É£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¡Öµ*/
 	{
 		minAccZ = 0.f;
 		maxAccZ = 0.f;

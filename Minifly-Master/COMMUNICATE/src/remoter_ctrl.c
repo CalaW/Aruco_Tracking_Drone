@@ -14,40 +14,40 @@
 #include "vl53lxx.h"
 #include "system.h"
 
-/*FreeRTOSÏà¹ØÍ·ÎÄ¼þ*/
+/*FreeRTOSï¿½ï¿½ï¿½Í·ï¿½Ä¼ï¿½*/
 #include "FreeRTOS.h"
 #include "task.h"
 
 /********************************************************************************	 
- * ±¾³ÌÐòÖ»¹©Ñ§Ï°Ê¹ÓÃ£¬Î´¾­×÷ÕßÐí¿É£¬²»µÃÓÃÓÚÆäËüÈÎºÎÓÃÍ¾
+ * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö»ï¿½ï¿½Ñ§Ï°Ê¹ï¿½Ã£ï¿½Î´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îºï¿½ï¿½ï¿½Í¾
  * ALIENTEK MiniFly
- * Ò£¿ØÆ÷¿ØÖÆÇý¶¯´úÂë	
- * ÕýµãÔ­×Ó@ALIENTEK
- * ¼¼ÊõÂÛÌ³:www.openedv.com
- * ´´½¨ÈÕÆÚ:2017/5/12
- * °æ±¾£ºV1.3
- * °æÈ¨ËùÓÐ£¬µÁ°æ±Ø¾¿¡£
- * Copyright(C) ¹ãÖÝÊÐÐÇÒíµç×Ó¿Æ¼¼ÓÐÏÞ¹«Ë¾ 2014-2024
+ * Ò£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½	
+ * ï¿½ï¿½ï¿½ï¿½Ô­ï¿½ï¿½@ALIENTEK
+ * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì³:www.openedv.com
+ * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½:2017/5/12
+ * ï¿½æ±¾ï¿½ï¿½V1.3
+ * ï¿½ï¿½È¨ï¿½ï¿½ï¿½Ð£ï¿½ï¿½ï¿½ï¿½ï¿½Ø¾ï¿½ï¿½ï¿½
+ * Copyright(C) ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¿Æ¼ï¿½ï¿½ï¿½ï¿½Þ¹ï¿½Ë¾ 2014-2024
  * All rights reserved
  *
- * ÐÞ¸ÄËµÃ÷:
- * °æ±¾V1.3 Ôö¼ÓÉÏµçÐ£×¼Í¨¹ýºóÉÏ´«Î¢µ÷ÐÅÏ¢¡£
+ * ï¿½Þ¸ï¿½Ëµï¿½ï¿½:
+ * ï¿½æ±¾V1.3 ï¿½ï¿½ï¿½ï¿½ï¿½Ïµï¿½Ð£×¼Í¨ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½Î¢ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½
 ********************************************************************************/
 
-ctrlVal_t remoterCtrl;/*·¢ËÍµ½commander×ËÌ¬¿ØÖÆÊý¾Ý*/
+ctrlVal_t remoterCtrl;/*ï¿½ï¿½ï¿½Íµï¿½commanderï¿½ï¿½Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
 static MiniFlyMsg_t msg;
-static u8 reSendTimes = 3;	/*Î¢µ÷ÖØ·¢´ÎÊý*/
+static u8 reSendTimes = 3;	/*Î¢ï¿½ï¿½ï¿½Ø·ï¿½ï¿½ï¿½ï¿½ï¿½*/
 
-/*·µ»ØËÄÖáÐÅÏ¢*/
+/*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢*/
 void sendMsgACK(void)
 {
 	msg.version = configParam.version;
 	msg.mpu_selfTest = getIsMPU9250Present();
 	msg.baro_slfTest = getIsBaroPresent();
 	msg.isCanFly = getIsCalibrated();
-	if(msg.isCanFly == true)	/*Ð£×¼Í¨¹ýÖ®ºó·¢ËÍÎ¢µ÷Öµ*/
+	if(msg.isCanFly == true)	/*Ð£×¼Í¨ï¿½ï¿½Ö®ï¿½ï¿½ï¿½ï¿½Î¢ï¿½ï¿½Öµ*/
 	{
-		if(reSendTimes > 0) /*Î¢µ÷ÖØ·¢´ÎÊý*/
+		if(reSendTimes > 0) /*Î¢ï¿½ï¿½ï¿½Ø·ï¿½ï¿½ï¿½ï¿½ï¿½*/
 		{
 			reSendTimes--;
 			msg.trimPitch = configParam.trimP;
@@ -65,7 +65,7 @@ void sendMsgACK(void)
 	radiolinkSendPacketBlocking(&p);	
 }
 
-/*Ò£¿ØÊý¾Ý½ÓÊÕ´¦Àí*/
+/*Ò£ï¿½ï¿½ï¿½ï¿½ï¿½Ý½ï¿½ï¿½Õ´ï¿½ï¿½ï¿½*/
 void remoterCtrlProcess(atkp_t* pk)
 {	
 	if(pk->data[0] == REMOTER_CMD)
@@ -112,7 +112,7 @@ void remoterCtrlProcess(atkp_t* pk)
 				break;
 		}
 	}
-	else if(pk->data[0] == REMOTER_DATA)//Ôö¼Óx,y,depth
+	else if(pk->data[0] == REMOTER_DATA)//ï¿½ï¿½ï¿½ï¿½x,y,depth
 	{
 		remoterData_t remoterData = *(remoterData_t*)(pk->data+1);
 		
@@ -126,6 +126,7 @@ void remoterCtrlProcess(atkp_t* pk)
 		remoterCtrl.x = remoterData.x;
 		remoterCtrl.y = remoterData.y;
 		remoterCtrl.depth = remoterData.depth;
+		remoterCtrl.aruco_id = remoterData.aruco_id;
 		
 		setCommanderCtrlMode(remoterData.ctrlMode);
 		setCommanderFlightmode(remoterData.flightMode);
