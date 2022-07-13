@@ -137,11 +137,11 @@ void usblinkRxTask(void *param)
 					//USB_SendData(c);
 					if(c == '1'){
 						rxState = waitForStartByte2;
-						//USB_SendData('T');
+						USB_SendData('T');
 					}
 					else{
 						rxState = waitForStartByte1;
-						//USB_SendData('F');
+						USB_SendData('F');
 					}
 					//rxState = (c == '1') ? waitForStartByte2 : waitForStartByte1;
 					cksum = c;
@@ -151,11 +151,11 @@ void usblinkRxTask(void *param)
 					//USB_SendData(c);
 					if(c == '2'){
 						rxState = waitForData;
-						//USB_SendData('M');
+						USB_SendData('M');
 					}
 					else{
 						rxState = waitForStartByte1;
-						//USB_SendData('N');
+						USB_SendData('N');
 					}
 					//rxState = (c == '2') ? waitForMsgID : waitForStartByte1;
 					cksum += c;
@@ -167,7 +167,7 @@ void usblinkRxTask(void *param)
 				  	//rxState = waitForData;
 				//	cksum += c;
 				//	USB_SendData('3');
-				  break;
+				  //break;
 				//case waitForDataLength:
 				//	rxPacket.dataLen = c;
 				//	rxState =waitForData;
@@ -177,30 +177,31 @@ void usblinkRxTask(void *param)
 				case waitForData:
 					rxPacket.data[dataIndex] = c;
 					//USB_SendData(c);
-					//USB_SendData('5');
+					USB_SendData('P');
 					dataIndex++;
-					if(dataIndex==3)
+					if(dataIndex==10)
 					{
-						rxState = waitForChksum1;
+						upAnalyse(&rxPacket);
+						rxState = waitForStartByte1;
 						dataIndex=0;
 					}		
 					break;
-				case waitForChksum1:
+				//case waitForChksum1:
 					//if (cksum == c)/*所有校验正确*/
 					//USB_SendData(c);
 					//USB_SendData('6');
-					if(c == '0')
-					{
+					//if(c == '0')
+					//{
 						//xQueueSend(rxQueue, &rxPacket, 0);
-						upAnalyse(&rxPacket);
+						//upAnalyse(&rxPacket);
 						//USB_SendData('7');
-					} 
-					else
-					{
-						rxState = waitForStartByte1;
-					}
-					rxState = waitForStartByte1;
-					break;
+					//} 
+					//else
+					//{
+						//rxState = waitForStartByte1;
+					//}
+					//rxState = waitForStartByte1;
+					//break;
 				default:
 					break;
 			}

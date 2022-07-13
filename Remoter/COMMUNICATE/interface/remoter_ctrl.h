@@ -50,6 +50,7 @@ enum expModuleID
 //ĞÂ¼ÓÈëx,y,depth
 typedef __packed struct
 {
+	int S_id;
 	float x;
 	float y;
 	float depth;
