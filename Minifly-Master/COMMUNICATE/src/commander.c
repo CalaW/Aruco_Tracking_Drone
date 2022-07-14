@@ -35,6 +35,8 @@
 #define MIN_THRUST  	5000
 #define MAX_THRUST  	60000
 
+#define APPROXIMATE_CAM_DELAY 60
+
 static bool isRCLocked;				/* ң������״̬ */
 static ctrlValCache_t remoteCache;	/* ң�ػ������� */
 static ctrlValCache_t wifiCache;	/* wifi�������� */
@@ -227,30 +229,31 @@ void flyerAutoLand(setpoint_t *setpoint,const state_t *state)
 }
 
 static bool initHigh = false;
-static bool isAdjustingPosZ = false;/*����Zλ��*/
-static bool isAdjustingPosXY = true;/*����XYλ��*/
-static u8 adjustPosXYTime = 0;		/*XYλ�õ���ʱ��*/
-static float errorPosX = 0.f;		/*Xλ�����*/
-static float errorPosY = 0.f;		/*Yλ�����*/
-static float errorPosZ = 0.f;		/*Zλ�����*/
+static bool isAdjustingPosZ = false;/*Adjust Z Pos*/
+static bool isAdjustingPosXY = true;/*Adjust XY Pos*/
+static u8 adjustPosXYTime = 0;		/*XY Pos adjust time*/
+static u8 adjustArucoXYTime = 0;	/*Aruco XY Pos adjust time*/
+static float errorPosX = 0.f;		/*X error*/
+static float errorPosY = 0.f;		/*Y error*/
+static float errorPosZ = 0.f;		/*Z error*/
+static point_t dronePosBeforeDelay = {0.f};
 
 
 void commanderGetSetpoint(setpoint_t *setpoint, state_t *state)
 {	
 	static float maxAccZ = 0.f;
-//	ctrlVal_t ctrlVal =  nowCache->tarVal[nowCache->activeSide];	/*��ȡ����*/
 	
-	ctrlDataUpdate();	/*���¿�������*/
+	ctrlDataUpdate(); /*Update contral values*/
 	
-	state->isRCLocked = isRCLocked;	/*����ң��������״̬*/
+	state->isRCLocked = isRCLocked;	/*Update remote locked status*/
 	
-	if(commander.ctrlMode & 0x01)/*����ģʽ*/
+	if(commander.ctrlMode & 0x01) /*Fixed height Controller*/
 	{
-		if(commander.keyLand)/*һ������*/
+		if(commander.keyLand) /*One-click landing*/
 		{
 			flyerAutoLand(setpoint, state);
 		}
-		else if(commander.keyFlight)/*һ�����*/ 
+		else if(commander.keyFlight) /*One-click take off*/ 
 		{	
 			setpoint->thrust = 0;
 			setpoint->mode.z = modeAbs;		
@@ -263,7 +266,7 @@ void commanderGetSetpoint(setpoint_t *setpoint, state_t *state)
 				errorPosY = 0.f;
 				errorPosZ = 0.f;
 
-				setFastAdjustPosParam(0, 1, 80.f);	/*һ����ɸ߶�80cm*/															
+				setFastAdjustPosParam(0, 1, 80.f);	/*Fly to 80cm*/															
 			}		
 				
 			float climb = ((ctrlValLpf.thrust - 32767.f) / 32767.f);
@@ -278,24 +281,24 @@ void commanderGetSetpoint(setpoint_t *setpoint, state_t *state)
 				setpoint->mode.z = modeVelocity;
 				setpoint->velocity.z = climb;
 
-				if(climb < -(CLIMB_RATE/5.f))	/*������������*/
+				if(climb < -(CLIMB_RATE/5.f))	/*thrust too low*/
 				{
-					if(isExitFlip == true)		/*�˳��շ����ټ����ٶ�*/
+					if(isExitFlip == true)		/*exit flipping, get accel again*/
 					{
 						if(maxAccZ < state->acc.z)
 							maxAccZ = state->acc.z;
-						if(maxAccZ > 250.f)		/*�����������󣬷ɻ�����ͣ��*/
+						if(maxAccZ > 250.f)		/*touch ground, shutdown*/
 						{
 							commander.keyFlight = false;
-							estRstAll();	/*��λ����*/
+							estRstAll();	/*reset all estimation*/
 						}
 					}
 				}else
 				{
 					maxAccZ = 0.f;
 				}
-			}//TODO
-			else if(arucoData.x != 0 && arucoData.y != 0 && arucoData.z != 0) //aruco decide height
+			}
+			else if(arucoData.x != 0 && arucoData.y != 0 && arucoData.z != 0) //aruco id decide height
 			{
 				isAdjustingPosZ = false;
 				
@@ -307,15 +310,15 @@ void commanderGetSetpoint(setpoint_t *setpoint, state_t *state)
 				isAdjustingPosZ = false;
 			
 				setpoint->mode.z = modeAbs;
-				setpoint->position.z = state->position.z + errorPosZ;	/*������λ��*/									
+				setpoint->position.z = state->position.z + errorPosZ; /*Adjust new pos*/									
 			}
-			else if(isAdjustingPosZ == false)	/*Zλ�����*/
+			else if(isAdjustingPosZ == false) /*Z error*/
 			{
 				errorPosZ = setpoint->position.z - state->position.z;
-				errorPosZ = constrainf(errorPosZ, -10.f, 10.f);	/*����޷� ��λcm*/
+				errorPosZ = constrainf(errorPosZ, -10.f, 10.f); /*Z err constrain, unit is cm*/
 			}
 		}
-		else/*��½״̬*/
+		else /*landing*/
 		{
 			setpoint->mode.z = modeDisable;
 			setpoint->thrust = 0;
@@ -325,7 +328,7 @@ void commanderGetSetpoint(setpoint_t *setpoint, state_t *state)
 			isAdjustingPosZ = false;
 		}
 	}
-	else /*�ֶ���ģʽ*/
+	else /*Manual fly*/
 	{
 		setpoint->mode.z = modeDisable;
 		setpoint->thrust = ctrlValLpf.thrust;
@@ -333,21 +336,43 @@ void commanderGetSetpoint(setpoint_t *setpoint, state_t *state)
  	
 	setpoint->attitude.roll = ctrlValLpf.roll;
 	setpoint->attitude.pitch = ctrlValLpf.pitch;
-	setpoint->attitude.yaw  = -ctrlValLpf.yaw;	/*ҡ�˷����yaw�����෴*/
+	setpoint->attitude.yaw  = -ctrlValLpf.yaw; /*stick is opposite to yaw axis*/
 	
-	if(getOpDataState() && commander.ctrlMode == 0x03)	/*�������ݿ��ã�����ģʽ*/ 
+	if(getOpDataState() && commander.ctrlMode == 0x03) /*Opflow is avaliable, fix point controller*/ 
 	{
-		setpoint->attitude.yaw *= 0.5f;	/*����ģʽ����yaw����*/
+		setpoint->attitude.yaw *= 0.5f;	/*yaw adjust slow down*/
 		
-		/*����λ�� �ٶ�ģʽ*/
+		/*adjust pos, vel mode*/
 		if(fabsf(setpoint->attitude.roll) > 1.5f || fabsf(setpoint->attitude.pitch) > 1.5f)
 		{
 			adjustPosXYTime = 0;
+			adjustArucoXYTime = 0;
 			isAdjustingPosXY = true;
 			setpoint->mode.x = modeVelocity;
 			setpoint->mode.y = modeVelocity;
 			setpoint->velocity.x = setpoint->attitude.pitch * 4.0f;
 			setpoint->velocity.y = setpoint->attitude.roll * 4.0f;	
+		}
+		else if(arucoData.x == 0 || arucoData.y == 0 || arucoData.z == 0)
+		{
+			adjustArucoXYTime = 0;
+		}
+		else if(arucoData.x != 0 && arucoData.y != 0 && arucoData.z != 0 && adjustArucoXYTime == 100 - APPROXIMATE_CAM_DELAY) //aruco detected, get pos
+		{
+			adjustArucoXYTime++;
+			dronePosBeforeDelay.x = state.x;
+			dronePosBeforeDelay.y = state.y;
+			dronePosBeforeDelay.z = state.z;
+		}
+		
+		else if(arucoData.x != 0 && arucoData.y != 0 && arucoData.z != 0 && adjustArucoXYTime++ > 100) //aruco detected, get pos
+		{
+			adjustArucoXYTime = 0;
+			isAdjustingPosXY = false;
+			setpoint->mode.x = modeAbs;
+			setpoint->mode.y = modeAbs;
+			setpoint->position.x = dronePosBeforeDelay.x + arucoData.y;
+			setpoint->position.y = dronePosBeforeDelay.y - arucoData.x;
 		}
 		else if(isAdjustingPosXY == true)
 		{
@@ -358,18 +383,18 @@ void commanderGetSetpoint(setpoint_t *setpoint, state_t *state)
 			}		
 			setpoint->mode.x = modeAbs;
 			setpoint->mode.y = modeAbs;
-			setpoint->position.x = state->position.x + errorPosX;	//������λ��
-			setpoint->position.y = state->position.y + errorPosY;	//������λ��
+			setpoint->position.x = state->position.x + errorPosX; //adjust new pos
+			setpoint->position.y = state->position.y + errorPosY;
 		}
-		else if(isAdjustingPosXY == false)	/*λ�����*/
+		else if(isAdjustingPosXY == false) /*pos error*/
 		{	
 			errorPosX = setpoint->position.x - state->position.x;
 			errorPosY = setpoint->position.y - state->position.y;
-			errorPosX = constrainf(errorPosX, -30.0f, 30.0f);	/*����޷� ��λcm*/
-			errorPosY = constrainf(errorPosY, -30.0f, 30.0f);	/*����޷� ��λcm*/
+			errorPosX = constrainf(errorPosX, -30.0f, 30.0f); /*constraint, unit is cm*/
+			errorPosY = constrainf(errorPosY, -30.0f, 30.0f);
 		}
 	}
-	else	/*�ֶ�ģʽ*/
+	else /*Manual fly*/
 	{
 		setpoint->mode.x = modeDisable;
 		setpoint->mode.y = modeDisable;		
@@ -378,18 +403,18 @@ void commanderGetSetpoint(setpoint_t *setpoint, state_t *state)
 	setpoint->mode.roll = modeDisable;	
 	setpoint->mode.pitch = modeDisable;	
 	
-	if(commander.flightMode)/*��ͷģʽ*/
+	if(commander.flightMode) /*no heading mode*/
 	{
 		yawMode = CAREFREE;		
 		rotateYawCarefree(setpoint, state);
 	}		
-	else	/*X����ģʽ*/
+	else /*x heading mode*/
 	{
 		yawMode = XMODE;
 	}		
 }
 
-/* ��ȡ������΢��ֵ */
+/* update trim */
 void getAndUpdateTrim(float* pitch, float* roll)
 {
 	*pitch = nowCache->tarVal[nowCache->activeSide].trimPitch;
@@ -413,7 +438,7 @@ u8 getCommanderFlightMode(void)
 void setCommanderKeyFlight(bool set)
 {
 	commander.keyFlight = set;
-	if(set == true)	/*һ����ɣ����������Сֵ*/
+	if(set == true)	/*One-click take off, clear min and max*/
 	{
 		minAccZ = 0.f;
 		maxAccZ = 0.f;
