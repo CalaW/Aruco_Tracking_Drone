@@ -35,7 +35,7 @@
 #define MIN_THRUST  	5000
 #define MAX_THRUST  	60000
 
-#define APPROXIMATE_CAM_DELAY 60
+#define APPROXIMATE_CAM_DELAY 50
 
 static bool isRCLocked;				/* ң������״̬ */
 static ctrlValCache_t remoteCache;	/* ң�ػ������� */
@@ -357,15 +357,15 @@ void commanderGetSetpoint(setpoint_t *setpoint, state_t *state)
 		{
 			adjustArucoXYTime = 0;
 		}
-		else if(arucoData.x != 0 && arucoData.y != 0 && arucoData.z != 0 && adjustArucoXYTime == 100 - APPROXIMATE_CAM_DELAY) //aruco detected, get pos
+		else if(arucoData.x != 0 && arucoData.y != 0 && arucoData.z != 0 && adjustArucoXYTime == 60 - APPROXIMATE_CAM_DELAY) //aruco detected, get pos
 		{
 			adjustArucoXYTime++;
-			dronePosBeforeDelay.x = state.x;
-			dronePosBeforeDelay.y = state.y;
-			dronePosBeforeDelay.z = state.z;
+			dronePosBeforeDelay.x = state->position.x;
+			dronePosBeforeDelay.y = state->position.y;
+			dronePosBeforeDelay.z = state->position.z;
 		}
 		
-		else if(arucoData.x != 0 && arucoData.y != 0 && arucoData.z != 0 && adjustArucoXYTime++ > 100) //aruco detected, get pos
+		else if(arucoData.x != 0 && arucoData.y != 0 && arucoData.z != 0 && adjustArucoXYTime++ > 60) //aruco detected, get pos
 		{
 			adjustArucoXYTime = 0;
 			isAdjustingPosXY = false;
