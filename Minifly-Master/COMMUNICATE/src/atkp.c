@@ -653,6 +653,10 @@ void arucoDataProcess(atkp_t *p)
 {
 	arucoData_t arucoReceived = *(arucoData_t*)(p->data);
 	
+	//arucoData.x = arucoReceived.x != 0 && arucoReceived.z != 0 ? arucoReceived.x : arucoData.x;
+	//arucoData.y = arucoReceived.y != 0 && arucoReceived.z != 0 ? arucoReceived.y : arucoData.y;
+	arucoData.a = arucoReceived.a;
+	arucoData.b = arucoReceived.b;
 	arucoData.x = arucoReceived.x;
 	arucoData.y = arucoReceived.y;
 	arucoData.z = arucoReceived.z;
