@@ -84,7 +84,7 @@ static void atkpAnalyze(atkp_t *p)
 		mypacket.dataLen = sizeof(MySendData);
 		memcpy(mypacket.data,(u8*)&MySendData,sizeof(MySendData));
 		radiolinkSendPacket(&mypacket);
-		usblinkSendPacket(&mypacket);
+		//usblinkSendPacket(&mypacket);
 	}
 }
 
