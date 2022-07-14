@@ -121,6 +121,7 @@ void atkpTxTask(void *param);
 void atkpRxAnlTask(void *param);
 void atkpInit(void);
 bool atkpReceivePacketBlocking(atkp_t *p);
+void arucoDataProcess(atkp_t *p);
 
 #endif /*ATKP_H*/
 

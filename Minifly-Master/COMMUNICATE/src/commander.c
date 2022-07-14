@@ -40,6 +40,7 @@ static ctrlValCache_t remoteCache;	/* рёО©╫ь╩О©╫О©╫О©╫О©╫О©╫О©╫О©╫ */
 static ctrlValCache_t wifiCache;	/* wifiО©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ */
 static ctrlValCache_t* nowCache = &remoteCache;/*д╛О©╫О©╫н╙рёО©╫О©╫*/
 static ctrlVal_t ctrlValLpf = {0.f};/* О©╫О©╫О©╫О©╫О©╫О©╫О©╫щ╣О©╫м╗ */
+arucoData_t arucoData = {0.f}; //aruco data
 
 static float minAccZ = 0.f; 
 static float maxAccZ = 0.f; 
@@ -237,7 +238,7 @@ static float errorPosZ = 0.f;		/*Zн╩О©╫О©╫О©╫О©╫О©╫*/
 void commanderGetSetpoint(setpoint_t *setpoint, state_t *state)
 {	
 	static float maxAccZ = 0.f;
-	ctrlVal_t ctrlVal =  nowCache->tarVal[nowCache->activeSide];	/*╤ах║╩╨╢Ф*/
+//	ctrlVal_t ctrlVal =  nowCache->tarVal[nowCache->activeSide];	/*╤ах║╩╨╢Ф*/
 	
 	ctrlDataUpdate();	/*О©╫О©╫О©╫б©О©╫О©╫О©╫О©╫О©╫О©╫О©╫*/
 	
@@ -293,13 +294,13 @@ void commanderGetSetpoint(setpoint_t *setpoint, state_t *state)
 				{
 					maxAccZ = 0.f;
 				}
-			}
-			else if(ctrlVal.x != 0 && ctrlVal.y != 0 && ctrlVal.depth != 0) //aruco decide height
+			}//TODO
+			else if(arucoData.x != 0 && arucoData.y != 0 && arucoData.z != 0) //aruco decide height
 			{
 				isAdjustingPosZ = false;
 				
 				setpoint->mode.z = modeAbs;
-				setpoint->position.z = ctrlVal.aruco_id * 3;39
+				setpoint->position.z = arucoData.id * 3;
 			}
 			else if (isAdjustingPosZ == true)
 			{
