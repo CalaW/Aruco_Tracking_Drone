@@ -77,10 +77,20 @@ static void atkpAnalyze(atkp_t *p)
 		mypacket.msgID = DOWN_MyData;
 		MySendData.a = 3.0;
 		MySendData.b = 3.0;
-		MySendData.x_Now = (float)(((p->data[1])<<8) + (p->data[2]));
-		MySendData.y_Now = (float)(((p->data[3])<<8) + (p->data[4]));
-		MySendData.depth_Now = (float)(((p->data[5])<<8) + (p->data[6]));
-		MySendData.My_id = (s16)(p->data[7]);
+		if((p->data[1]) == 0) {
+			MySendData.x_Now = (float)(((p->data[2])<<8) + (p->data[3]));
+		}
+		else if((p->data[1]) == 1){
+			MySendData.x_Now = -((float)(((p->data[2])<<8) + (p->data[3])));
+		}
+		if((p->data[4]) == 0) {
+			MySendData.y_Now = (float)(((p->data[5])<<8) + (p->data[6]));
+		}
+		else if((p->data[4]) == 1){
+			MySendData.y_Now = -((float)(((p->data[5])<<8) + (p->data[6])));
+		}
+		MySendData.depth_Now = (float)(((p->data[7])<<8) + (p->data[8]));
+		MySendData.My_id = (s16)(p->data[9]);
 		mypacket.dataLen = sizeof(MySendData);
 		memcpy(mypacket.data,(u8*)&MySendData,sizeof(MySendData));
 		radiolinkSendPacket(&mypacket);
