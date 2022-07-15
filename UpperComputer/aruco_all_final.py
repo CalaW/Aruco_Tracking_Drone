@@ -1,7 +1,6 @@
 import binascii
 import math
 import time
-
 import serial
 import cv2
 import time
@@ -76,6 +75,7 @@ class Camera:
 
     def rescale_frame(self, frame, percent=65):
         return cv2.resize(frame, None, fx=percent, fy=percent)
+
 
 camera_matrix = np.array(
     [[4.6429354704e+02, 0., 3.1333423645e+02], [0., 4.6885993446e+02, 1.4059063087e+02], [0., 0., 1.]])
