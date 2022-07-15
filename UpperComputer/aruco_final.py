@@ -8,6 +8,74 @@ import time
 import threading
 import os
 import numpy as np
+import multiprocessing as mp
+
+
+class Camera:
+
+    def __init__(self, rtsp_url):  # 初始化
+        # load pipe for data transmittion to the process
+        self.parent_conn, child_conn = mp.Pipe()
+        # load process
+        self.p = mp.Process(target=self.update, args=(child_conn, rtsp_url))
+        # start process
+        self.p.daemon = True
+        self.p.start()
+
+    def end(self):
+        # send closure request to process
+
+        self.parent_conn.send(2)
+
+    def update(self, conn, rtsp_url):
+        # load cam into seperate process
+
+        print("Cam Loading...")
+        cap = cv2.VideoCapture(rtsp_url, cv2.CAP_FFMPEG)
+        print("Cam Loaded...")
+        run = True
+
+        while run:
+
+            # grab frames from the buffer
+            cap.grab()
+
+            # recieve input data
+            rec_dat = conn.recv()
+
+            if rec_dat == 1:
+                # if frame requested
+                ret, frame = cap.read()
+                conn.send(frame)
+
+            elif rec_dat == 2:
+                # if close requested
+                cap.release()
+                run = False
+
+        print("Camera Connection Closed")
+        conn.close()
+
+    def get_frame(self, resize=None):
+        ###used to grab frames from the cam connection process
+
+        ##[resize] param : % of size reduction or increase i.e 0.65 for 35% reduction  or 1.5 for a 50% increase
+
+        # send request
+        self.parent_conn.send(1)
+        frame = self.parent_conn.recv()
+
+        # reset request
+        self.parent_conn.send(0)
+
+        # resize if needed
+        if resize == None:
+            return frame
+        else:
+            return self.rescale_frame(frame, resize)
+
+    def rescale_frame(self, frame, percent=65):
+        return cv2.resize(frame, None, fx=percent, fy=percent)
 
 camera_matrix = np.array(
     [[4.6429354704e+02, 0., 3.1333423645e+02], [0., 4.6885993446e+02, 1.4059063087e+02], [0., 0., 1.]])
@@ -19,7 +87,7 @@ KNOWN_WIDTH = 4.8  # Aruco码的实际边长（正方形）
 font = cv2.FONT_HERSHEY_SIMPLEX
 focalLength = 85 * KNOWN_DISTANCE / KNOWN_WIDTH  # 焦距——85为实拍图片中Aruco码的像素值
 ser_port0 = "COM16"  # 根据实际情况而定
-ser = serial.Serial(ser_port0, 115200, timeout=1)  # 初始化串口
+# ser = serial.Serial(ser_port0, 115200, timeout=1)  # 初始化串口
 
 
 # 根据像素值计算aruco码到相机的距离
@@ -69,7 +137,7 @@ def signal(X):
 
 # 通过串口发送信息
 # 可以完全自己更改，以下模式是根据接收端的协议而定
-def send(camX, camY, distance, id):
+def send(camX, camY, distance, id, ser):
     pack_mes0 = bytearray()
     pack_mes0.append(0xAA)
     pack_mes0.append(0xAF)
@@ -97,6 +165,7 @@ def send(camX, camY, distance, id):
         str_adjust_16(0xAA + 0xAF + 0x52 + 10 + 1 + signX + cX_0 + cX_1 + signY + cY_0 + cY_1 + dis_0 + dis_1 + id)[
         8:]))
     ser.write(pack_mes0)
+    # print(pack_mes0)
     # print("receive:", ser.readlines())
 
 
@@ -107,23 +176,27 @@ def work():
     arucoDict = cv2.aruco.Dictionary_get(cv2.aruco.DICT_4X4_250)  # 设置预定义的字典
     arucoParams = cv2.aruco.DetectorParameters_create()  # 使用默认值初始化检测器参数
     # 开启摄像头
-    videoStream = cv2.VideoCapture(0)
+    # videoStream = cv2.VideoCapture()
+    url1 = "http://192.168.1.1:80/av.asf?user=admin&pwd="
+    cam = Camera(url1)
     # 开启串口
+    ser = serial.Serial(ser_port0, 115200, timeout=1)
     ser.flushInput()  # 清空缓冲区
     t = []
-    t0 = threading.Thread(target=send, args=(0, 0, 0, 0))
-    t1 = threading.Thread(target=send, args=(0, 0, 0, 0))
+    t0 = threading.Thread(target=send, args=(0, 0, 0, 0, ser))
+    t1 = threading.Thread(target=send, args=(0, 0, 0, 0, ser))
     t.append(t0)
     t.append(t1)
     num = 0
     t[0].start()
     while True:
-        ret, frame = videoStream.read()  # 开始读取视频流
+        # ret, frame = videoStream.read()  # 开始读取视频流
+        frame = cam.get_frame()
         frame = cv2.undistort(frame, camera_matrix, dist_matrix)
         cv2.imwrite("SaveImage.jpg", frame)  # 保存图片
         # detect aruco markers in frame
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)  # 先转为灰度图
-        gray = cv2.GaussianBlur(gray, (5, 5), 0)  # 进行高斯降噪
+        gray = cv2.GaussianBlur(gray, (5, 5), 0)  # 进行高斯滤波降噪
         (corners, ids, rejected) = cv2.aruco.detectMarkers(gray, arucoDict, parameters=arucoParams)  # 获得aruco码的相关信息
         # find aruco
         if len(corners) > 0:  # 如果检测到aruco码
@@ -185,16 +258,18 @@ def work():
                 t[0].join()
                 t[0] = t[1]
                 t[1] = threading.Thread(target=send,
-                                        args=(int(cam_points_x * 100), int(cam_points_y * 100), distance, markerID))
+                                        args=(int(cam_points_x * 100),
+                                              int(cam_points_y * 100),
+                                              distance, markerID, ser))
+                t[0].start()
                 print("camX:", cam_points_x * 100)
                 print("camY:", cam_points_y * 100)
                 print("dis:", distance)
                 print("id:", markerID)
-                t[0].start()
-        else:
+        # else:
             t[0].join()
             t[0] = t[1]
-            t[1] = threading.Thread(target=send, args=(0, 0, 0, 0))
+            t[1] = threading.Thread(target=send, args=(0, 0, 0, 0, ser))
             t[0].start()
         cv2.imshow("frame", frame)
         if cv2.waitKey(1) & 0xFF == ord('c'):
@@ -202,10 +277,7 @@ def work():
             num += 1
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
-
     cv2.destroyAllWindows()
-    videoStream.release()
-
 
 if __name__ == '__main__':
     work()
