@@ -34,7 +34,9 @@ typedef struct
 }atkp_t;
 
 //新增的通讯数据结构
-typedef struct{
+typedef __packed struct{
+	float a;
+	float b;
 	float x_Now;
 	float y_Now;
 	float depth_Now;

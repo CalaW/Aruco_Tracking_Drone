@@ -47,6 +47,8 @@ typedef __packed struct
 
 typedef __packed struct
 {
+	float a;
+	float b;
 	float x;
 	float y;
 	float z;
